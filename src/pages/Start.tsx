@@ -6,36 +6,35 @@ import centralStyle from "../common/central.module.css";
 import style from "./Start.module.css";
 
 export default function Start() {
-  const [clientId, setClientId] = useState("c244c6f8b8d49a0ef71b");
-  const [clientSecret, setClientSecret] = useState(
-    "39ea3bc05aa850a6dfd5ee4e2a8ab45314bb302d"
-  );
-  const [authzEndpoint, setAuthzEndpoint] = useState(
-    "https://github.com/login/oauth/authorize"
-  );
   const [state, _] = useState(uuid);
   const redirectUri = useHref("callback");
 
   const [scopes, setScopes] = useState<Item[]>([]);
-
   const handleScopeDelete = (id: string) => {
     setScopes((items) => items.filter((item) => item.id !== id));
   };
-
   const handleScopeChange = (id: string, newValue: string) => {
     setScopes((items) =>
       items.map((item) => (item.id === id ? { id: id, value: newValue } : item))
     );
   };
-
   const handleScopeCreate = () => {
     setScopes((items) => items.concat([{ id: uuid(), value: "" }]));
   };
 
+  const [clientId, setClientId] = useState("c244c6f8b8d49a0ef71b");
   const handleClientIdChange = (event: ChangeEvent<HTMLInputElement>) =>
     setClientId(event.target.value);
+
+  const [clientSecret, setClientSecret] = useState(
+    "39ea3bc05aa850a6dfd5ee4e2a8ab45314bb302d"
+  );
   const handleClientSecretChange = (event: ChangeEvent<HTMLInputElement>) =>
     setClientSecret(event.target.value);
+
+  const [authzEndpoint, setAuthzEndpoint] = useState(
+    "https://github.com/login/oauth/authorize"
+  );
   const handleAuthzUrlChange = (event: ChangeEvent<HTMLInputElement>) =>
     setAuthzEndpoint(event.target.value);
 
