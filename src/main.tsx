@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Root from "./pages/Root";
 import About from "./pages/About";
 import Callback from "./pages/Callback";
+import Start from "./pages/Start";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
       {
         element: <Home />,
         index: true,
+      },
+      {
+        element: <Start />,
+        path: "start",
       },
       {
         element: <Callback />,

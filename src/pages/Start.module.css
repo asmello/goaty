@@ -1,0 +1,3 @@
+.expanded {
+  margin: var(--universal-margin) calc(var(--universal-margin) / 2);
+}
