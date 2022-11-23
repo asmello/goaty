@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useHref } from "react-router-dom";
-import { v4 as uuiv4 } from "uuid";
-import InputList from "../components/InputList";
+import { v4 as uuid } from "uuid";
+import InputList, { Item } from "../components/InputList";
 import centralStyle from "../common/central.module.css";
 import style from "./Start.module.css";
 
@@ -13,9 +13,24 @@ export default function Start() {
   const [authzEndpoint, setAuthzEndpoint] = useState(
     "https://github.com/login/oauth/authorize"
   );
-  const [scopes, setScopes] = useState<string[]>([]);
-  const [state, _] = useState(uuiv4);
+  const [state, _] = useState(uuid);
   const redirectUri = useHref("callback");
+
+  const [scopes, setScopes] = useState<Item[]>([]);
+
+  const handleScopeDelete = (id: string) => {
+    setScopes((items) => items.filter((item) => item.id !== id));
+  };
+
+  const handleScopeChange = (id: string, newValue: string) => {
+    setScopes((items) =>
+      items.map((item) => (item.id === id ? { id: id, value: newValue } : item))
+    );
+  };
+
+  const handleScopeCreate = () => {
+    setScopes((items) => items.concat([{ id: uuid(), value: "" }]));
+  };
 
   const handleClientIdChange = (event: ChangeEvent<HTMLInputElement>) =>
     setClientId(event.target.value);
@@ -32,7 +47,7 @@ export default function Start() {
       state: state,
     };
     if (scopes.length > 0) {
-      params.scope = scopes.join(" ");
+      params.scope = scopes.map((scope) => scope.value).join(" ");
     }
     const encodedParams = new URLSearchParams(params).toString();
     window.location.href = `${authzEndpoint}?${encodedParams}`;
@@ -72,7 +87,13 @@ export default function Start() {
                   onChange={handleClientSecretChange}
                 />
               </div>
-              <InputList label="Scopes" />
+              <InputList
+                label="Scopes"
+                items={scopes}
+                onCreate={handleScopeCreate}
+                onChange={handleScopeChange}
+                onDelete={handleScopeDelete}
+              />
               <div className={`button-group ${style.expanded}`}>
                 <input type="submit" className="primary" value="Submit" />
               </div>

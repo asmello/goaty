@@ -1,40 +1,32 @@
-import { v4 as uuid } from "uuid";
-import { useState } from "react";
 import style from "./InputList.module.css";
 import InputListItem from "./InputListItem";
 
-interface Item {
+export interface Item {
   id: string;
   value: string;
 }
 
 interface InputListProps {
   label: string;
+  items: Item[];
+  onChange: (id: string, newValue: string) => void;
+  onDelete: (id: string) => void;
+  onCreate: () => void;
 }
 
-export default function InputList({ label }: InputListProps) {
-  const [items, setItems] = useState<Item[]>([]);
-
-  const handleDelete = (id: string) => {
-    setItems((items) => items.filter((item) => item.id !== id));
-  };
-
-  const handleChange = (id: string, newValue: string) => {
-    setItems((items) =>
-      items.map((item) => (item.id === id ? { id: id, value: newValue } : item))
-    );
-  };
-
-  const handlePlusClick = () => {
-    setItems((items) => items.concat([{ id: uuid(), value: "" }]));
-  };
-
+export default function InputList({
+  label,
+  items,
+  onChange,
+  onDelete,
+  onCreate,
+}: InputListProps) {
   const values = items.map((item) => (
     <InputListItem
       id={item.id}
       value={item.value}
-      onChange={handleChange}
-      onDelete={handleDelete}
+      onChange={onChange}
+      onDelete={onDelete}
     />
   ));
 
@@ -46,7 +38,7 @@ export default function InputList({ label }: InputListProps) {
           type="button"
           id={style.addButton}
           className="small"
-          onClick={handlePlusClick}
+          onClick={onCreate}
         >
           <b>＋</b>
         </button>
