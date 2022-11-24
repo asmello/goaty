@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useHref } from "react-router-dom";
+import { resolvePath } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import InputList, { Item } from "../components/InputList";
 import centralStyle from "../common/central.module.css";
@@ -7,7 +7,7 @@ import style from "./Start.module.css";
 
 export default function Start() {
   const [state, _] = useState(uuid);
-  const redirectUri = useHref("callback");
+  const redirectUri = window.location.href.replace("start", "callback");
 
   const [scopes, setScopes] = useState<Item[]>([]);
   const handleScopeDelete = (id: string) => {
@@ -62,10 +62,11 @@ export default function Start() {
               <div className="input-group vertical">
                 <label htmlFor="authorization_url">Authorization URL</label>
                 <input
-                  type="text"
+                  type="url"
                   id="authorization_url"
                   value={authzEndpoint}
                   onChange={handleAuthzUrlChange}
+                  required
                 />
               </div>
               <div className="input-group vertical">
@@ -75,15 +76,18 @@ export default function Start() {
                   id="client_id"
                   value={clientId}
                   onChange={handleClientIdChange}
+                  required
                 />
               </div>
               <div className="input-group vertical">
                 <label htmlFor="client_secret">Client Secret</label>
                 <input
-                  type="text"
+                  type="password"
                   id="client_secret"
                   value={clientSecret}
                   onChange={handleClientSecretChange}
+                  autoComplete="off"
+                  required
                 />
               </div>
               <InputList
