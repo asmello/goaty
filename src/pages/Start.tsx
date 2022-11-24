@@ -1,12 +1,11 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { resolvePath } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import InputList, { Item } from "../components/InputList";
 import centralStyle from "../common/central.module.css";
 import style from "./Start.module.css";
+import State from "../common/State";
 
 export default function Start() {
-  const [state, _] = useState(uuid);
   const redirectUri = window.location.href.replace("start", "callback");
 
   const [scopes, setScopes] = useState<Item[]>([]);
@@ -38,12 +37,24 @@ export default function Start() {
   const handleAuthzUrlChange = (event: ChangeEvent<HTMLInputElement>) =>
     setAuthzEndpoint(event.target.value);
 
+  const [tokenEndpoint, setTokenEndpoint] = useState(
+    "https://github.com/login/oauth/access_token"
+  );
+  const handleTokenEndpointChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTokenEndpoint(event.target.value);
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const state: State = {
+      t: tokenEndpoint,
+      i: clientId,
+      s: clientSecret,
+    };
     let params: Record<string, string> = {
       client_id: clientId,
       redirect_uri: redirectUri,
-      state: state,
+      state: btoa(JSON.stringify(state)),
     };
     if (scopes.length > 0) {
       params.scope = scopes.map((scope) => scope.value).join(" ");
@@ -66,6 +77,16 @@ export default function Start() {
                   id="authorization_url"
                   value={authzEndpoint}
                   onChange={handleAuthzUrlChange}
+                  required
+                />
+              </div>
+              <div className="input-group vertical">
+                <label htmlFor="token_url">Token URL</label>
+                <input
+                  type="url"
+                  id="token_url"
+                  value={tokenEndpoint}
+                  onChange={handleTokenEndpointChange}
                   required
                 />
               </div>
