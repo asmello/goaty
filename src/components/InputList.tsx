@@ -23,6 +23,7 @@ export default function InputList({
 }: InputListProps) {
   const values = items.map((item) => (
     <InputListItem
+      key={item.id}
       id={item.id}
       value={item.value}
       onChange={onChange}

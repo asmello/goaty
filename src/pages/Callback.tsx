@@ -1,11 +1,22 @@
-import { useEffect, ChangeEvent } from "react";
+import { useEffect, ChangeEvent, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import State from "../common/State";
 
+interface TokenResponse {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  token_type: string;
+}
+
 export default function Callback() {
   const [searchParams, _] = useSearchParams();
   const navigate = useNavigate();
+  const [tokenResponse, setTokenResponse] = useState<TokenResponse | undefined>(
+    undefined
+  );
+
   const handleErrorClose = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.checked) {
       navigate("/start");
@@ -108,8 +119,8 @@ export default function Callback() {
   const decodedState: State = JSON.parse(atob(state));
 
   useEffect(() => {
-    axios
-      .post(
+    const fetchToken = async () => {
+      const response = await axios.postForm(
         decodedState.t,
         {
           grant_type: "authorization_code",
@@ -117,21 +128,23 @@ export default function Callback() {
           redirect_uri: window.location.href,
         },
         { auth: { username: decodedState.i, password: decodedState.s } }
-      )
-      .then((response) => console.log(response))
-      .catch((error) => console.log(error));
+      );
+      setTokenResponse(response.data);
+    };
+
+    fetchToken();
   }, []);
 
   // todo: post request in useEffect
 
   return (
     <div>
-      <p>
-        Code: <code>{code}</code>
-      </p>
-      <p>
-        State: <code>{state}</code>
-      </p>
+      <p>Got a {tokenResponse?.token_type} token!</p>
+      <h3>Access Token</h3>
+      <pre>{tokenResponse?.access_token}</pre>
+      <p>This token expires at {new Date().toLocaleString()}</p>
+      <h3>Refresh Token</h3>
+      <pre>{tokenResponse?.refresh_token}</pre>
     </div>
   );
 }

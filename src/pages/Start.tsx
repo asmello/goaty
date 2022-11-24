@@ -21,25 +21,19 @@ export default function Start() {
     setScopes((items) => items.concat([{ id: uuid(), value: "" }]));
   };
 
-  const [clientId, setClientId] = useState("c244c6f8b8d49a0ef71b");
+  const [clientId, setClientId] = useState("");
   const handleClientIdChange = (event: ChangeEvent<HTMLInputElement>) =>
     setClientId(event.target.value);
 
-  const [clientSecret, setClientSecret] = useState(
-    "39ea3bc05aa850a6dfd5ee4e2a8ab45314bb302d"
-  );
+  const [clientSecret, setClientSecret] = useState("");
   const handleClientSecretChange = (event: ChangeEvent<HTMLInputElement>) =>
     setClientSecret(event.target.value);
 
-  const [authzEndpoint, setAuthzEndpoint] = useState(
-    "https://github.com/login/oauth/authorize"
-  );
+  const [authzEndpoint, setAuthzEndpoint] = useState("");
   const handleAuthzUrlChange = (event: ChangeEvent<HTMLInputElement>) =>
     setAuthzEndpoint(event.target.value);
 
-  const [tokenEndpoint, setTokenEndpoint] = useState(
-    "https://github.com/login/oauth/access_token"
-  );
+  const [tokenEndpoint, setTokenEndpoint] = useState("");
   const handleTokenEndpointChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTokenEndpoint(event.target.value);
   };
@@ -52,9 +46,10 @@ export default function Start() {
       s: clientSecret,
     };
     let params: Record<string, string> = {
+      response_type: "code",
       client_id: clientId,
-      redirect_uri: redirectUri,
       state: btoa(JSON.stringify(state)),
+      redirect_uri: redirectUri,
     };
     if (scopes.length > 0) {
       params.scope = scopes.map((scope) => scope.value).join(" ");
@@ -77,7 +72,6 @@ export default function Start() {
                   id="authorization_url"
                   value={authzEndpoint}
                   onChange={handleAuthzUrlChange}
-                  required
                 />
               </div>
               <div className="input-group vertical">
@@ -87,7 +81,6 @@ export default function Start() {
                   id="token_url"
                   value={tokenEndpoint}
                   onChange={handleTokenEndpointChange}
-                  required
                 />
               </div>
               <div className="input-group vertical">
@@ -97,7 +90,6 @@ export default function Start() {
                   id="client_id"
                   value={clientId}
                   onChange={handleClientIdChange}
-                  required
                 />
               </div>
               <div className="input-group vertical">
@@ -108,7 +100,6 @@ export default function Start() {
                   value={clientSecret}
                   onChange={handleClientSecretChange}
                   autoComplete="off"
-                  required
                 />
               </div>
               <InputList
