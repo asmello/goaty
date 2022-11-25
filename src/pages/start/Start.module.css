@@ -1,0 +1,7 @@
+.large {
+  max-width: 800px;
+}
+
+input {
+  width: calc(100% - var(--universal-margin));
+}

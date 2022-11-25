@@ -11,3 +11,9 @@ button.small.add-button {
   padding: calc(var(--universal-padding) / 4) var(--universal-padding);
   margin: var(--universal-margin) auto;
 }
+
+.centred {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

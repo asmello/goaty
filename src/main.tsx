@@ -7,7 +7,7 @@ import Home from "./pages/Home";
 import Root from "./pages/Root";
 import About from "./pages/About";
 import Callback from "./pages/Callback";
-import Start from "./pages/Start";
+import Start from "./pages/start/Start";
 
 const router = createBrowserRouter([
   {

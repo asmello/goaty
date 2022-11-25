@@ -35,3 +35,9 @@ section {
     text-align: right;
   }
 }
+
+fieldset {
+  margin: var(--universal-margin) var(--universal-margin)
+    calc(2 * var(--universal-margin)) var(--universal-margin);
+  flex-grow: 1;
+}
