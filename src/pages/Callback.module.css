@@ -1,0 +1,13 @@
+textarea {
+  width: calc(100% - var(--universal-margin));
+  font-family: monospace;
+}
+
+h3 > mark,
+h3 > span {
+  line-height: 2em;
+}
+
+h3 {
+  text-align: center;
+}

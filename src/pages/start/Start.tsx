@@ -1,6 +1,6 @@
 import { FormEvent } from "react";
 import centralStyle from "../../common/central.module.css";
-import style from "./Start.module.css";
+import "./Start.module.css";
 import State from "../../common/State";
 import { useServerConfig } from "./server";
 import { useClientConfig } from "./client";
@@ -22,11 +22,15 @@ export default function Start() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const state: State = {
+
+    let state: State = {
       t: serverConfig.tokenEndpoint,
       i: clientConfig.clientId,
       s: clientConfig.clientSecret,
     };
+    if (options.proxyEnabled) {
+      state.p = options.proxyUrl;
+    }
     let params: Record<string, string> = {
       response_type: "code",
       client_id: clientConfig.clientId,
@@ -34,6 +38,7 @@ export default function Start() {
     };
     if (options.sendUri) {
       params.redirect_uri = redirectUri;
+      state.r = true;
     }
     extras.forEach((item) => (params[item.key] = item.value));
     if (scopes.length > 0) {
@@ -44,7 +49,7 @@ export default function Start() {
   };
 
   return (
-    <div className={`${centralStyle.central} ${style.large}`}>
+    <div className={`large-container ${centralStyle.central}`}>
       <div className="card fluid">
         <div className="section">
           <h3>Configure</h3>

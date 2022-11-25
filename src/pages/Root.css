@@ -41,3 +41,12 @@ fieldset {
     calc(2 * var(--universal-margin)) var(--universal-margin);
   flex-grow: 1;
 }
+
+pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.large-container {
+  max-width: 800px;
+}

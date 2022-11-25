@@ -1,7 +1,9 @@
 import { useEffect, ChangeEvent, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import axios, { AxiosError } from "axios";
 import State from "../common/State";
+import centralStyle from "../common/central.module.css";
+import "./Callback.module.css";
 
 interface TokenResponse {
   access_token: string;
@@ -13,9 +15,8 @@ interface TokenResponse {
 export default function Callback() {
   const [searchParams, _] = useSearchParams();
   const navigate = useNavigate();
-  const [tokenResponse, setTokenResponse] = useState<TokenResponse | undefined>(
-    undefined
-  );
+  const [tokenResponse, setTokenResponse] = useState<TokenResponse>();
+  const [axiosError, setAxiosError] = useState<AxiosError>();
 
   const handleErrorClose = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.checked) {
@@ -35,7 +36,6 @@ export default function Callback() {
           <code>{error}</code>
         </a>
       );
-    // const state = searchParams.get('state');
     return (
       <>
         <input
@@ -119,32 +119,122 @@ export default function Callback() {
   const decodedState: State = JSON.parse(atob(state));
 
   useEffect(() => {
-    const fetchToken = async () => {
-      const response = await axios.postForm(
-        decodedState.t,
-        {
+    if (decodedState.p) {
+      axios
+        .post(decodedState.p, {
+          target: decodedState.t,
           grant_type: "authorization_code",
           code: code,
-          redirect_uri: window.location.href,
-        },
-        { auth: { username: decodedState.i, password: decodedState.s } }
-      );
-      setTokenResponse(response.data);
-    };
-
-    fetchToken();
+          redirect_uri: decodedState.r ? window.location.href : undefined,
+          username: decodedState.i,
+          password: decodedState.s,
+        })
+        .then((response) => setTokenResponse(response.data))
+        .catch((error) => console.error(error));
+    } else {
+      axios
+        .postForm(
+          decodedState.t,
+          {
+            grant_type: "authorization_code",
+            code: code,
+            redirect_uri: decodedState.r ? window.location.href : undefined,
+          },
+          { auth: { username: decodedState.i, password: decodedState.s } }
+        )
+        .then((response) => setTokenResponse(response.data))
+        .catch((error: AxiosError) => setAxiosError(error));
+    }
   }, []);
 
-  // todo: post request in useEffect
+  if (!tokenResponse) {
+    if (axiosError) {
+      return (
+        <div className={centralStyle.central}>
+          <div className="card fluid">
+            <div className="section">
+              <h3>
+                <mark className="secondary">{axiosError.code}</mark>
+                <small>{axiosError.message}</small>
+              </h3>
+            </div>
+            {axiosError.response && (
+              <div className="section">
+                <p>Server response:</p>
+                <pre>{JSON.stringify(axiosError.response.data)}</pre>
+              </div>
+            )}
+            <div className="section centred">
+              <Link role="button" to="/start" className="primary">
+                Start again
+              </Link>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className={centralStyle.central}>
+          <div className="card fluid">
+            <div className="section">
+              <h3>
+                <span>Token Unavailable</span>
+                <small>Unknown Error</small>
+              </h3>
+            </div>
+            <div className="section centred">
+              <Link role="button" to="/start" className="primary">
+                Start again
+              </Link>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  const expireTime = new Date(
+    new Date().getTime() + tokenResponse.expires_in * 1000
+  );
 
   return (
-    <div>
-      <p>Got a {tokenResponse?.token_type} token!</p>
-      <h3>Access Token</h3>
-      <pre>{tokenResponse?.access_token}</pre>
-      <p>This token expires at {new Date().toLocaleString()}</p>
-      <h3>Refresh Token</h3>
-      <pre>{tokenResponse?.refresh_token}</pre>
+    <div className={`large-container ${centralStyle.central}`}>
+      <div className="card fluid">
+        <div className="section">
+          <h1>
+            Result <small>Got a {tokenResponse.token_type} token!</small>
+          </h1>
+          <div className="collapse">
+            <input
+              type="checkbox"
+              id="collapse-access-token"
+              aria-hidden="true"
+              defaultChecked={false}
+            />
+            <label htmlFor="collapse-access-token" aria-hidden>
+              Access Token
+            </label>
+            <div>
+              <textarea readOnly rows={5}>
+                {tokenResponse.access_token}
+              </textarea>
+              <p>{`This token expires at ${expireTime.toLocaleString()}`}</p>
+            </div>
+            <input
+              type="checkbox"
+              id="collapse-refresh-token"
+              aria-hidden="true"
+              defaultChecked={false}
+            />
+            <label htmlFor="collapse-refresh-token" aria-hidden>
+              Refresh Token
+            </label>
+            <div>
+              <textarea readOnly>{tokenResponse.refresh_token}</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
