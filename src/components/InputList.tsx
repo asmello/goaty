@@ -1,13 +1,6 @@
-import style from "./InputList.module.css";
-import InputListItem from "./InputListItem";
-
-export interface Item {
-  id: string;
-  value: string;
-}
+import InputListItem, { Item } from "./InputListItem";
 
 interface InputListProps {
-  label: string;
   items: Item[];
   onChange: (id: string, newValue: string) => void;
   onDelete: (id: string) => void;
@@ -15,7 +8,6 @@ interface InputListProps {
 }
 
 export default function InputList({
-  label,
   items,
   onChange,
   onDelete,
@@ -32,20 +24,13 @@ export default function InputList({
   ));
 
   return (
-    <div className={style.inputList}>
-      <div className={style.header}>
-        <span className={style.expansive}>{label}</span>
-        <button
-          type="button"
-          id={style.addButton}
-          className="small"
-          onClick={onCreate}
-        >
-          <b>＋</b>
+    <>
+      {values}
+      <div className="row">
+        <button type="button" className="small add-button" onClick={onCreate}>
+          <b>+</b>
         </button>
       </div>
-
-      <ul role="list">{values}</ul>
-    </div>
+    </>
   );
 }

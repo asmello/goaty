@@ -1,25 +1,14 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { v4 as uuid } from "uuid";
-import InputList, { Item } from "../components/InputList";
 import centralStyle from "../common/central.module.css";
 import style from "./Start.module.css";
 import State from "../common/State";
+import { useInputList, useInputMap } from "../common/hooks";
 
 export default function Start() {
   const redirectUri = window.location.href.replace("start", "callback");
 
-  const [scopes, setScopes] = useState<Item[]>([]);
-  const handleScopeDelete = (id: string) => {
-    setScopes((items) => items.filter((item) => item.id !== id));
-  };
-  const handleScopeChange = (id: string, newValue: string) => {
-    setScopes((items) =>
-      items.map((item) => (item.id === id ? { id: id, value: newValue } : item))
-    );
-  };
-  const handleScopeCreate = () => {
-    setScopes((items) => items.concat([{ id: uuid(), value: "" }]));
-  };
+  const [scopes, scopesComponent] = useInputList();
+  const [extras, extrasComponent] = useInputMap();
 
   const [clientId, setClientId] = useState("");
   const handleClientIdChange = (event: ChangeEvent<HTMLInputElement>) =>
@@ -51,6 +40,7 @@ export default function Start() {
       state: btoa(JSON.stringify(state)),
       redirect_uri: redirectUri,
     };
+    extras.forEach((item) => (params[item.key] = item.value));
     if (scopes.length > 0) {
       params.scope = scopes.map((scope) => scope.value).join(" ");
     }
@@ -58,33 +48,50 @@ export default function Start() {
     window.location.href = `${authzEndpoint}?${encodedParams}`;
   };
 
+  const labelClass = "col-sm-12 col-md-3";
+  const inputClass = "col-sm-12 col-md";
+
   return (
-    <div className={centralStyle.central}>
-      <div className="row">
-        <div className="card fluid">
-          <div className="section">
-            <h3>Enter the details</h3>
-            <form onSubmit={handleSubmit}>
-              <div className="input-group vertical">
-                <label htmlFor="authorization_url">Authorization URL</label>
+    <div className={`${centralStyle.central} ${style.large}`}>
+      <div className="card fluid">
+        <div className="section">
+          <h3>Enter the details</h3>
+          <form onSubmit={handleSubmit}>
+            <div className="row responsive-label">
+              <div className={labelClass}>
+                <label htmlFor="authorization_url" className="doc">
+                  Authorization URL
+                </label>
+              </div>
+              <div className={inputClass}>
                 <input
                   type="url"
                   id="authorization_url"
                   value={authzEndpoint}
                   onChange={handleAuthzUrlChange}
+                  placeholder="https://example.com/authorize"
                 />
               </div>
-              <div className="input-group vertical">
+            </div>
+            <div className="row responsive-label">
+              <div className={labelClass}>
                 <label htmlFor="token_url">Token URL</label>
+              </div>
+              <div className={inputClass}>
                 <input
                   type="url"
                   id="token_url"
                   value={tokenEndpoint}
                   onChange={handleTokenEndpointChange}
+                  placeholder="https://example.com/token"
                 />
               </div>
-              <div className="input-group vertical">
+            </div>
+            <div className="row responsive-label">
+              <div className={labelClass}>
                 <label htmlFor="client_id">Client ID</label>
+              </div>
+              <div className={inputClass}>
                 <input
                   type="text"
                   id="client_id"
@@ -92,8 +99,12 @@ export default function Start() {
                   onChange={handleClientIdChange}
                 />
               </div>
-              <div className="input-group vertical">
+            </div>
+            <div className="row responsive-label">
+              <div className={labelClass}>
                 <label htmlFor="client_secret">Client Secret</label>
+              </div>
+              <div className={inputClass}>
                 <input
                   type="password"
                   id="client_secret"
@@ -102,18 +113,48 @@ export default function Start() {
                   autoComplete="off"
                 />
               </div>
-              <InputList
-                label="Scopes"
-                items={scopes}
-                onCreate={handleScopeCreate}
-                onChange={handleScopeChange}
-                onDelete={handleScopeDelete}
-              />
-              <div className={`button-group ${style.expanded}`}>
+            </div>
+            <div className="row">
+              <fieldset>
+                <>
+                  <legend>Scopes</legend>
+                  {scopesComponent}
+                </>
+              </fieldset>
+            </div>
+            <div className="row">
+              <fieldset>
+                <>
+                  <legend>Extra Parameters</legend>
+                  {extrasComponent}
+                </>
+              </fieldset>
+            </div>
+            <div className="row">
+              <fieldset>
+                <legend>Options</legend>
+                <div className="row">
+                  <div className={`col-sm ${style.centred}`}>
+                    <label htmlFor="use_proxy">Use proxy</label>
+                    <input type="checkbox" id="use_proxy" />
+                  </div>
+                  <div className={`col-sm ${style.centred}`}>
+                    <label htmlFor="send_uri">
+                      Send <code>redirect_uri</code>
+                    </label>
+                    <input type="checkbox" id="send_uri" />
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+            <div className="row responsive-label">
+              <div className="col-sm-4" />
+              <div className="col-sm-4">
                 <input type="submit" className="primary" value="Submit" />
               </div>
-            </form>
-          </div>
+              <div className="col-sm-4" />
+            </div>
+          </form>
         </div>
       </div>
     </div>

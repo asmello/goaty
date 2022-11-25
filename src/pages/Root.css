@@ -17,6 +17,21 @@ footer {
   text-align: center;
 }
 
+section {
+  display: flex;
+  align-items: center;
+}
+
 .card {
   box-shadow: 5px 5px 5px #ddd;
+}
+
+.responsive-label {
+  align-items: center;
+}
+
+@media (min-width: 775px) {
+  .responsive-label [class|="col"]:has(label) {
+    text-align: right;
+  }
 }

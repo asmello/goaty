@@ -1,0 +1,4 @@
+.conflicting {
+  border-color: var(--input-invalid-color);
+  box-shadow: none;
+}

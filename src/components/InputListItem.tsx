@@ -1,5 +1,9 @@
 import { ChangeEvent } from "react";
-import style from "./InputList.module.css";
+
+export interface Item {
+  id: string;
+  value: string;
+}
 
 interface InputListItemProps {
   id: string;
@@ -19,17 +23,15 @@ export default function InputListItem({
   };
 
   return (
-    <li>
-      <input
-        className={style.expansive}
-        value={value}
-        type="text"
-        id="client_secret"
-        onChange={handleChange}
-      />
-      <button type="button" className="small" onClick={() => onDelete(id)}>
-        <b>－</b>
-      </button>
-    </li>
+    <div className="row">
+      <div className="col-sm-11">
+        <input type="text" value={value} onChange={handleChange} />
+      </div>
+      <div className="col-sm-1">
+        <button type="button" className="small" onClick={() => onDelete(id)}>
+          <b>－</b>
+        </button>
+      </div>
+    </div>
   );
 }

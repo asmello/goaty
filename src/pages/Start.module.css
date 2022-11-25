@@ -1,3 +1,23 @@
 .expanded {
   margin: var(--universal-margin) calc(var(--universal-margin) / 2);
 }
+
+.large {
+  max-width: 800px;
+}
+
+input {
+  width: calc(100% - var(--universal-margin));
+}
+
+fieldset {
+  margin: var(--universal-margin) var(--universal-margin)
+    calc(2 * var(--universal-margin)) var(--universal-margin);
+  flex-grow: 1;
+}
+
+.centred {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
