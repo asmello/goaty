@@ -169,7 +169,7 @@ export default function Callback() {
                 <pre>{JSON.stringify(axiosError.response.data)}</pre>
               </div>
             )}
-            <div className="section centred">
+            <div className="section centered">
               <Link role="button" to={startLink} className="primary">
                 Start again
               </Link>
@@ -187,7 +187,7 @@ export default function Callback() {
                 <small>Unknown Error</small>
               </h3>
             </div>
-            <div className="section centred">
+            <div className="section centered">
               <Link role="button" to={startLink} className="primary">
                 Start again
               </Link>
@@ -204,7 +204,7 @@ export default function Callback() {
 
   return (
     <div className={`large-container ${centralStyle.central}`}>
-      <div className="card fluid">
+      <div className="card fluid shadow">
         <div className="section">
           <h1>
             Result <small>Got a {tokenResponse.token_type} token!</small>
