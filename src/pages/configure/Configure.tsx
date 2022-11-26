@@ -186,7 +186,7 @@ export default function Configure() {
             <b>do not share with unauthorized parties</b>.
           </p>
           <button className="warning" onClick={copyShareLink}>
-            Confirm
+            Understood
           </button>
         </div>
       </>
@@ -239,8 +239,8 @@ export default function Configure() {
                   <div className="row">{extrasFields}</div>
                   <div className="row responsive-label">
                     <div className="col-sm" />
-                    <div className="col-sm-4">
-                      <input type="submit" className="primary" value="Start" />
+                    <div className="col-sm-3">
+                      <input type="submit" className="primary" value="Go" />
                     </div>
                     <div className="col-sm" />
                   </div>
