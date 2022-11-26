@@ -7,7 +7,7 @@ import Home from "./pages/Home";
 import Root from "./pages/Root";
 import About from "./pages/About";
 import Callback from "./pages/Callback";
-import Start from "./pages/start/Start";
+import Configure from "./pages/configure/Configure";
 
 const router = createBrowserRouter([
   {
@@ -19,8 +19,8 @@ const router = createBrowserRouter([
         index: true,
       },
       {
-        element: <Start />,
-        path: "start",
+        element: <Configure />,
+        path: "configure",
       },
       {
         element: <Callback />,

@@ -10,7 +10,7 @@ export default function Home() {
             <h1>
               🐐 GOATY <small>The Generic OAuth2 Token Yanker</small>
             </h1>
-            <Link to="start" role="button" className="primary">
+            <Link to="configure" role="button" className="primary">
               Get started
             </Link>
           </div>

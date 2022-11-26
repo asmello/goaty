@@ -1,4 +1,4 @@
-import { useEffect, ChangeEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import State from "../common/State";
@@ -27,7 +27,7 @@ export default function Callback() {
           className="modal"
           defaultChecked
           onChange={(event) => {
-            if (!event.target.checked) navigateToStart();
+            if (!event.target.checked) navigateToConfigure();
           }}
         />
         <div>
@@ -47,10 +47,10 @@ export default function Callback() {
     );
   }
 
-  const startLink = `/start?state=${state}`;
+  const configureFragment = `/configure?state=${state}`;
 
-  const navigateToStart = () => {
-    navigate(startLink);
+  const navigateToConfigure = () => {
+    navigate(configureFragment);
   };
 
   if (searchParams.get("error")) {
@@ -73,7 +73,7 @@ export default function Callback() {
           className="modal"
           defaultChecked
           onChange={(event) => {
-            if (!event.target.checked) navigateToStart();
+            if (!event.target.checked) navigateToConfigure();
           }}
         />
         <div>
@@ -101,7 +101,7 @@ export default function Callback() {
           className="modal"
           defaultChecked
           onChange={(event) => {
-            if (!event.target.checked) navigateToStart();
+            if (!event.target.checked) navigateToConfigure();
           }}
         />
         <div>
@@ -170,7 +170,7 @@ export default function Callback() {
               </div>
             )}
             <div className="section centered">
-              <Link role="button" to={startLink} className="primary">
+              <Link role="button" to={configureFragment} className="primary">
                 Start again
               </Link>
             </div>
@@ -188,7 +188,7 @@ export default function Callback() {
               </h3>
             </div>
             <div className="section centered">
-              <Link role="button" to={startLink} className="primary">
+              <Link role="button" to={configureFragment} className="primary">
                 Start again
               </Link>
             </div>

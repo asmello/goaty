@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import centralStyle from "../../common/central.module.css";
-import style from "./Start.module.css";
+import style from "./Configure.module.css";
 import State from "../../common/State";
 import { ServerConfig, useServerConfig } from "./server";
 import { ClientConfig, useClientConfig } from "./client";
@@ -12,8 +12,8 @@ import { v4 as uuid } from "uuid";
 import { Item } from "../../components/InputListItem";
 import { MapItem } from "../../components/InputMapItem";
 
-export default function Start() {
-  const redirectUri = window.location.href.replace(/start.*/, "callback");
+export default function Configure() {
+  const redirectUri = window.location.href.replace(/configure.*/, "callback");
 
   const labelClass = "col-sm-12 col-md-3";
   const inputClass = "col-sm-12 col-md";
