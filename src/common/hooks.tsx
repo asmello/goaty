@@ -5,7 +5,11 @@ import InputMap from "../components/InputMap";
 import { MapItem } from "../components/InputMapItem";
 import { Item } from "../components/InputListItem";
 
-export function useInputList(): [Item[], JSX.Element] {
+export function useInputList(): [
+  Item[],
+  (newItems: Item[]) => void,
+  JSX.Element
+] {
   const [items, setItems] = useState<Item[]>([]);
 
   const handleItemDelete = (id: string) => {
@@ -29,10 +33,14 @@ export function useInputList(): [Item[], JSX.Element] {
     />
   );
 
-  return [items, component];
+  return [items, setItems, component];
 }
 
-export function useInputMap(): [MapItem[], JSX.Element] {
+export function useInputMap(): [
+  MapItem[],
+  (newItems: MapItem[]) => void,
+  JSX.Element
+] {
   const [items, setItems] = useState<MapItem[]>([]);
 
   const handleItemDelete = (id: string) => {
@@ -64,5 +72,5 @@ export function useInputMap(): [MapItem[], JSX.Element] {
     />
   );
 
-  return [items, component];
+  return [items, setItems, component];
 }

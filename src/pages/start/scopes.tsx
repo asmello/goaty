@@ -2,8 +2,12 @@ import { useInputList } from "../../common/hooks";
 import { Item } from "../../components/InputListItem";
 import style from "./scopes.module.css";
 
-export function useScopes(): [Item[], JSX.Element] {
-  const [scopes, scopesComponent] = useInputList();
+export function useScopes(): [
+  Item[],
+  (newScopes: Item[]) => void,
+  JSX.Element
+] {
+  const [scopes, setScopes, scopesComponent] = useInputList();
 
   const wrappedComponent = (
     <fieldset className={style.scopes}>
@@ -14,5 +18,5 @@ export function useScopes(): [Item[], JSX.Element] {
     </fieldset>
   );
 
-  return [scopes, wrappedComponent];
+  return [scopes, setScopes, wrappedComponent];
 }

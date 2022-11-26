@@ -9,7 +9,7 @@ export interface ServerConfig {
 export function useServerConfig(
   labelClass: string,
   inputClass: string
-): [ServerConfig, JSX.Element] {
+): [ServerConfig, (newConfig: ServerConfig) => void, JSX.Element] {
   const [authzEndpoint, setAuthzEndpoint] = useState("");
   const handleAuthzUrlChange = (event: ChangeEvent<HTMLInputElement>) =>
     setAuthzEndpoint(event.target.value);
@@ -17,6 +17,11 @@ export function useServerConfig(
   const [tokenEndpoint, setTokenEndpoint] = useState("");
   const handleTokenEndpointChange = (event: ChangeEvent<HTMLInputElement>) =>
     setTokenEndpoint(event.target.value);
+
+  const setConfig = (newConfig: ServerConfig) => {
+    setAuthzEndpoint(newConfig.authzEndpoint);
+    setTokenEndpoint(newConfig.tokenEndpoint);
+  };
 
   const component = (
     <ServerFields
@@ -31,6 +36,7 @@ export function useServerConfig(
 
   return [
     { authzEndpoint: authzEndpoint, tokenEndpoint: tokenEndpoint },
+    setConfig,
     component,
   ];
 }

@@ -17,11 +17,40 @@ export default function Callback() {
   const navigate = useNavigate();
   const [tokenResponse, setTokenResponse] = useState<TokenResponse>();
   const [axiosError, setAxiosError] = useState<AxiosError>();
+  const state = searchParams.get("state");
+  if (state === null) {
+    return (
+      <>
+        <input
+          type="checkbox"
+          id="modal-control"
+          className="modal"
+          defaultChecked
+          onChange={(event) => {
+            if (!event.target.checked) navigateToStart();
+          }}
+        />
+        <div>
+          <div className="card">
+            <label htmlFor="modal-control" className="modal-close"></label>
+            <h3 className="section">Error</h3>
 
-  const handleErrorClose = (event: ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.checked) {
-      navigate("/start");
-    }
+            <div className="section">
+              <p>
+                The remote server did not return the <code>state</code>
+                parameter.
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  const startLink = `/start?state=${state}`;
+
+  const navigateToStart = () => {
+    navigate(startLink);
   };
 
   if (searchParams.get("error")) {
@@ -43,7 +72,9 @@ export default function Callback() {
           id="modal-control"
           className="modal"
           defaultChecked
-          onChange={handleErrorClose}
+          onChange={(event) => {
+            if (!event.target.checked) navigateToStart();
+          }}
         />
         <div>
           <div className="card">
@@ -69,7 +100,9 @@ export default function Callback() {
           id="modal-control"
           className="modal"
           defaultChecked
-          onChange={handleErrorClose}
+          onChange={(event) => {
+            if (!event.target.checked) navigateToStart();
+          }}
         />
         <div>
           <div className="card">
@@ -79,34 +112,6 @@ export default function Callback() {
             <div className="section">
               <p>
                 The remote server did not return the <code>code</code>
-                parameter.
-              </p>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  const state = searchParams.get("state");
-  if (state === null) {
-    return (
-      <>
-        <input
-          type="checkbox"
-          id="modal-control"
-          className="modal"
-          defaultChecked
-          onChange={handleErrorClose}
-        />
-        <div>
-          <div className="card">
-            <label htmlFor="modal-control" className="modal-close"></label>
-            <h3 className="section">Error</h3>
-
-            <div className="section">
-              <p>
-                The remote server did not return the <code>state</code>
                 parameter.
               </p>
             </div>
@@ -165,7 +170,7 @@ export default function Callback() {
               </div>
             )}
             <div className="section centred">
-              <Link role="button" to="/start" className="primary">
+              <Link role="button" to={startLink} className="primary">
                 Start again
               </Link>
             </div>
@@ -183,7 +188,7 @@ export default function Callback() {
               </h3>
             </div>
             <div className="section centred">
-              <Link role="button" to="/start" className="primary">
+              <Link role="button" to={startLink} className="primary">
                 Start again
               </Link>
             </div>
@@ -215,9 +220,7 @@ export default function Callback() {
               Access Token
             </label>
             <div>
-              <textarea readOnly rows={5}>
-                {tokenResponse.access_token}
-              </textarea>
+              <textarea readOnly rows={5} value={tokenResponse.access_token} />
               <p>{`This token expires at ${expireTime.toLocaleString()}`}</p>
             </div>
             <input
@@ -230,7 +233,7 @@ export default function Callback() {
               Refresh Token
             </label>
             <div>
-              <textarea readOnly>{tokenResponse.refresh_token}</textarea>
+              <textarea readOnly value={tokenResponse.refresh_token} />
             </div>
           </div>
         </div>

@@ -1,8 +1,12 @@
 import { useInputMap } from "../../common/hooks";
 import { MapItem } from "../../components/InputMapItem";
 
-export function useExtras(): [MapItem[], JSX.Element] {
-  const [extras, extrasComponent] = useInputMap();
+export function useExtras(): [
+  MapItem[],
+  (newExtras: MapItem[]) => void,
+  JSX.Element
+] {
+  const [extras, setExtras, extrasComponent] = useInputMap();
 
   const component = (
     <fieldset>
@@ -13,5 +17,5 @@ export function useExtras(): [MapItem[], JSX.Element] {
     </fieldset>
   );
 
-  return [extras, component];
+  return [extras, setExtras, component];
 }

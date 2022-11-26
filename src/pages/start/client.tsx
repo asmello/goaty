@@ -9,9 +9,14 @@ export interface ClientConfig {
 export function useClientConfig(
   labelClass: string,
   inputClass: string
-): [ClientConfig, JSX.Element] {
+): [ClientConfig, (newConfig: ClientConfig) => void, JSX.Element] {
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
+
+  const setConfig = (newConfig: ClientConfig) => {
+    setClientId(newConfig.clientId);
+    setClientSecret(newConfig.clientSecret);
+  };
 
   const component = (
     <ClientFields
@@ -24,5 +29,9 @@ export function useClientConfig(
     />
   );
 
-  return [{ clientId: clientId, clientSecret: clientSecret }, component];
+  return [
+    { clientId: clientId, clientSecret: clientSecret },
+    setConfig,
+    component,
+  ];
 }
