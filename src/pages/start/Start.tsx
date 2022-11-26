@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import centralStyle from "../../common/central.module.css";
-import "./Start.module.css";
+import style from "./Start.module.css";
 import State from "../../common/State";
 import { ServerConfig, useServerConfig } from "./server";
 import { ClientConfig, useClientConfig } from "./client";
@@ -32,6 +32,10 @@ export default function Start() {
 
   const [searchParams] = useSearchParams();
   const [state, setState] = useState(searchParams.get("state"));
+
+  const [linkCopiedState, setLinkCopiedState] = useState<
+    "SUCCESS" | "FAILED" | "IDLE"
+  >();
 
   useEffect(() => {
     if (state) {
@@ -69,6 +73,9 @@ export default function Start() {
         sendUri: decodedState.r ?? false,
       };
       setOptions(decodedOptions);
+
+      const url = new URL(window.location.href.replace(/\?.*/, ""));
+      window.history.replaceState(null, "", url);
     }
   }, []);
 
@@ -95,10 +102,6 @@ export default function Start() {
     }
     const newStateString = btoa(JSON.stringify(newState));
     setState(newStateString);
-
-    const url = new URL(window.location.toString());
-    url.searchParams.set("state", newStateString);
-    window.history.replaceState(null, "", url);
   }, [serverConfig, clientConfig, scopes, extras, options]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -126,29 +129,125 @@ export default function Start() {
     window.location.href = `${serverConfig.authzEndpoint}?${encodedParams}`;
   };
 
+  const copyShareLink = () => {
+    if (state) {
+      const url = new URL(window.location.toString());
+      url.searchParams.set("state", state);
+
+      navigator.clipboard
+        .writeText(url.toString())
+        .then(() => setLinkCopiedState("SUCCESS"))
+        .catch(() => setLinkCopiedState("FAILED"));
+    } else {
+      console.warn("Tried to copy link with null state");
+    }
+  };
+
+  const handleAcceptShareDialogChange = (checked: boolean) => {
+    if (checked) {
+      if (clientConfig.clientSecret === "") {
+        copyShareLink();
+      }
+    } else {
+      setLinkCopiedState("IDLE");
+    }
+  };
+
+  const acceptShareDialogContents = () => {
+    if (linkCopiedState === "SUCCESS") {
+      return (
+        <>
+          <h3 className="section">Success</h3>
+          <div className="section centered-text">
+            <p>Link successfully copied to clipboard.</p>
+          </div>
+        </>
+      );
+    }
+
+    if (linkCopiedState === "FAILED") {
+      return (
+        <>
+          <h3 className="section">Failure</h3>
+          <div className="section centered-text">
+            <p>Unable to copy link to clipboard.</p>
+            <p>Check your permissions.</p>
+          </div>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <h3 className="section">Warning</h3>
+        <div className="section centered-text">
+          <p>
+            This URL contains your client secret. Keep it safe and{" "}
+            <b>do not share with unauthorized parties</b>.
+          </p>
+          <button className="warning" onClick={copyShareLink}>
+            Confirm
+          </button>
+        </div>
+      </>
+    );
+  };
+
   return (
     <div className={`large-container ${centralStyle.central}`}>
-      <div className="card fluid">
+      <div className="card fluid shadow">
         <div className="section">
-          <h3>Configure</h3>
-          <form onSubmit={handleSubmit}>
-            <>
-              {serverFields}
-              {clientFields}
-              <div className="row">
-                <div className="col-sm">{scopesFields}</div>
-                <div className="col-sm">{optionsFields}</div>
+          <div className="row">
+            <div className="col-sm">
+              <h3>Configuration</h3>
+            </div>
+            <button
+              type="button"
+              className={`small ${style.shareButton}`}
+              disabled={state === null}
+            >
+              <label htmlFor="accept-share">
+                <span className="icon-share" />
+              </label>
+            </button>
+
+            <input
+              type="checkbox"
+              id="accept-share"
+              className="modal"
+              onChange={(event) =>
+                handleAcceptShareDialogChange(event.target.checked)
+              }
+            />
+            <div>
+              <div className="card">
+                <label htmlFor="accept-share" className="modal-close" />
+                {acceptShareDialogContents()}
               </div>
-              <div className="row">{extrasFields}</div>
-              <div className="row responsive-label">
-                <div className="col-sm" />
-                <div className="col-sm-4">
-                  <input type="submit" className="primary" value="Start" />
-                </div>
-                <div className="col-sm" />
-              </div>
-            </>
-          </form>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-sm">
+              <form onSubmit={handleSubmit}>
+                <>
+                  {serverFields}
+                  {clientFields}
+                  <div className="row">
+                    <div className="col-sm">{scopesFields}</div>
+                    <div className="col-sm">{optionsFields}</div>
+                  </div>
+                  <div className="row">{extrasFields}</div>
+                  <div className="row responsive-label">
+                    <div className="col-sm" />
+                    <div className="col-sm-4">
+                      <input type="submit" className="primary" value="Start" />
+                    </div>
+                    <div className="col-sm" />
+                  </div>
+                </>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>

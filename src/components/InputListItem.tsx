@@ -24,10 +24,10 @@ export default function InputListItem({
 
   return (
     <div className="row">
-      <div className="col-sm-10">
+      <div className="col-sm">
         <input type="text" value={value} onChange={handleChange} />
       </div>
-      <div className="col-sm">
+      <div className="col-sm-2">
         <button type="button" className="small" onClick={() => onDelete(id)}>
           <b>－</b>
         </button>

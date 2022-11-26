@@ -12,8 +12,18 @@ button.small.add-button {
   margin: var(--universal-margin) auto;
 }
 
-.centred {
+.centered {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.centered-text {
+  text-align: center;
+}
+
+.warning {
+  --button-back-color: #ffa500;
+  --button-fore-color: #2a2a2a;
+  --button-hover-back-color: #ffd484;
 }

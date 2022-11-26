@@ -4,7 +4,7 @@ import style from "../common/central.module.css";
 export default function Home() {
   return (
     <div className={style.central}>
-      <div className="card fluid">
+      <div className="card fluid shadow">
         <div className="section">
           <div className={style.center}>
             <h1>

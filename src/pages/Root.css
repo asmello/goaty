@@ -22,7 +22,7 @@ section {
   align-items: center;
 }
 
-.card {
+.card.shadow {
   box-shadow: 5px 5px 5px #ddd;
 }
 

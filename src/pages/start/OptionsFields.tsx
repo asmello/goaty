@@ -19,7 +19,7 @@ export default function OptionsFields({
     <fieldset>
       <legend>Options</legend>
       <div className="row">
-        <div className="col-sm centred">
+        <div className="col-sm centered">
           <label htmlFor="send_uri">
             Send <code>redirect_uri</code>
           </label>
@@ -32,7 +32,7 @@ export default function OptionsFields({
         </div>
       </div>
       <div className="row">
-        <div className="col-sm-12 centred">
+        <div className="col-sm-12 centered">
           <label htmlFor="proxy_enabled">Use proxy</label>
           <input
             type="checkbox"

@@ -1,3 +1,8 @@
 input {
   width: calc(100% - var(--universal-margin));
 }
+
+.shareButton {
+  position: absolute;
+  right: calc(2 * var(--universal-margin));
+}
