@@ -1,0 +1,3 @@
+fieldset.scopes {
+  padding-bottom: calc(2 * var(--universal-padding));
+}

@@ -5,14 +5,12 @@ export function useExtras(): [MapItem[], JSX.Element] {
   const [extras, extrasComponent] = useInputMap();
 
   const component = (
-    <div className="row">
-      <fieldset>
-        <>
-          <legend>Extra Parameters</legend>
-          {extrasComponent}
-        </>
-      </fieldset>
-    </div>
+    <fieldset>
+      <>
+        <legend>Extra Parameters</legend>
+        {extrasComponent}
+      </>
+    </fieldset>
   );
 
   return [extras, component];

@@ -57,9 +57,11 @@ export default function Start() {
             <>
               {serverFields}
               {clientFields}
-              {scopesFields}
-              {extrasFields}
-              {optionsFields}
+              <div className="row">
+                <div className="col-sm">{scopesFields}</div>
+                <div className="col-sm">{optionsFields}</div>
+              </div>
+              <div className="row">{extrasFields}</div>
               <div className="row responsive-label">
                 <div className="col-sm" />
                 <div className="col-sm-4">
