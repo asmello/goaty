@@ -4,7 +4,7 @@ import axios, { AxiosError } from "axios";
 import State from "../common/State";
 import style from "./Callback.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboard } from "@fortawesome/free-solid-svg-icons";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
 
 interface TokenResponse {
   access_token: string;
@@ -221,7 +221,7 @@ export default function Callback() {
               role="button"
               onClick={() => copyToClipboard(tokenResponse.access_token)}
             >
-              <FontAwesomeIcon icon={faClipboard} />
+              <FontAwesomeIcon icon={faCopy} />
             </button>
             <span>Access Token</span>
           </summary>
@@ -243,7 +243,7 @@ export default function Callback() {
               role="button"
               onClick={() => copyToClipboard(tokenResponse.refresh_token)}
             >
-              <FontAwesomeIcon icon={faClipboard} />
+              <FontAwesomeIcon icon={faCopy} />
             </button>
             <span>Refresh Token</span>
           </summary>

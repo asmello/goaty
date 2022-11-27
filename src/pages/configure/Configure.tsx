@@ -11,13 +11,10 @@ import { Item } from "../../components/InputListItem";
 import { MapItem } from "../../components/InputMapItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import style from "./Configure.module.css";
-import { faClipboard } from "@fortawesome/free-solid-svg-icons";
+import { faCopy } from "@fortawesome/free-solid-svg-icons";
 
 export default function Configure() {
   const redirectUri = window.location.href.replace(/configure.*/, "callback");
-
-  const labelClass = "col-sm-12 col-md-3";
-  const inputClass = "col-sm-12 col-md";
 
   const [serverConfig, setServerConfig, serverFieldset] = useServerConfig();
   const [clientConfig, setClientConfig, clientFieldset] = useClientConfig();
@@ -218,7 +215,7 @@ export default function Configure() {
         className="small inline secondary"
         onClick={handleShareClick}
       >
-        <FontAwesomeIcon icon={faClipboard} />
+        <FontAwesomeIcon icon={faCopy} />
       </button>
 
       <dialog open={shareModalState !== "CLOSED"}>
