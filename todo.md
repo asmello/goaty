@@ -12,3 +12,5 @@
 [ ] Darkmode cookie
 [ ] Add breadcrumb
 [ ] Refactor Configuration component
+[ ] Allow passing auth params through POST body
+[ ] Set Accept header on token request
