@@ -1,6 +1,5 @@
 import { useInputList } from "../../common/hooks";
 import { Item } from "../../components/InputListItem";
-import style from "./scopes.module.css";
 
 export function useScopes(): [
   Item[],
@@ -10,7 +9,7 @@ export function useScopes(): [
   const [scopes, setScopes, scopesComponent] = useInputList();
 
   const wrappedComponent = (
-    <fieldset className={style.scopes}>
+    <fieldset className="visible">
       <>
         <legend>Scopes</legend>
         {scopesComponent}

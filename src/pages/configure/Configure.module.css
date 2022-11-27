@@ -1,8 +1,8 @@
-input {
-  width: calc(100% - var(--universal-margin));
+#shareButton {
+  float: right;
 }
 
-.shareButton {
-  position: absolute;
-  right: calc(2 * var(--universal-margin));
+#submitButton {
+  max-width: calc(100% - 2 * var(--spacing));
+  margin: var(--spacing) auto;
 }

@@ -1,4 +1,7 @@
+import { faMinus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent } from "react";
+import style from "./InputListItem.module.css";
 
 export interface Item {
   id: string;
@@ -23,15 +26,15 @@ export default function InputListItem({
   };
 
   return (
-    <div className="row">
-      <div className="col-sm">
-        <input type="text" value={value} onChange={handleChange} />
-      </div>
-      <div className="col-sm-2">
-        <button type="button" className="small" onClick={() => onDelete(id)}>
-          <b>－</b>
-        </button>
-      </div>
+    <div className={style.item}>
+      <input type="text" value={value} onChange={handleChange} />
+      <button
+        type="button"
+        className={style.removeButton}
+        onClick={() => onDelete(id)}
+      >
+        <FontAwesomeIcon icon={faMinus} />
+      </button>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import style from "./OptionsFields.module.css";
+
 interface OptionsFieldsProps {
   proxyEnabled: boolean;
   proxyUrl: string;
@@ -16,45 +18,41 @@ export default function OptionsFields({
   onSendUriChange,
 }: OptionsFieldsProps) {
   return (
-    <fieldset>
+    <fieldset className="tight">
       <legend>Options</legend>
-      <div className="row">
-        <div className="col-sm centered">
-          <label htmlFor="send_uri">
-            Send <code>redirect_uri</code>
+
+      <label>
+        <input
+          type="checkbox"
+          role="switch"
+          checked={sendUri}
+          onChange={(event) => onSendUriChange(event.target.checked)}
+        />
+        Send <code>redirect_uri</code>
+      </label>
+
+      <label className={style.final}>
+        <input
+          type="checkbox"
+          role="switch"
+          checked={proxyEnabled}
+          onChange={(event) => onProxyEnabledChange(event.target.checked)}
+        />
+        Use proxy
+      </label>
+      {proxyEnabled && (
+        <>
+          <label htmlFor="proxy_url" hidden>
+            Proxy URL
           </label>
           <input
-            type="checkbox"
-            id="send_uri"
-            checked={sendUri}
-            onChange={(event) => onSendUriChange(event.target.checked)}
+            id="proxy_url"
+            type="url"
+            value={proxyUrl}
+            onChange={(event) => onProxyUrlChange(event.target.value)}
           />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-sm-12 centered">
-          <label htmlFor="proxy_enabled">Use proxy</label>
-          <input
-            type="checkbox"
-            id="proxy_enabled"
-            checked={proxyEnabled}
-            onChange={(event) => onProxyEnabledChange(event.target.checked)}
-          />
-        </div>
-        {proxyEnabled && (
-          <div className="col-sm-12">
-            <label htmlFor="proxy_url" hidden>
-              Proxy URL
-            </label>
-            <input
-              id="proxy_url"
-              type="url"
-              value={proxyUrl}
-              onChange={(event) => onProxyUrlChange(event.target.value)}
-            />
-          </div>
-        )}
-      </div>
+        </>
+      )}
     </fieldset>
   );
 }

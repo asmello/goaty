@@ -6,10 +6,11 @@ export interface ServerConfig {
   tokenEndpoint: string;
 }
 
-export function useServerConfig(
-  labelClass: string,
-  inputClass: string
-): [ServerConfig, (newConfig: ServerConfig) => void, JSX.Element] {
+export function useServerConfig(): [
+  ServerConfig,
+  (newConfig: ServerConfig) => void,
+  JSX.Element
+] {
   const [authzEndpoint, setAuthzEndpoint] = useState("");
   const handleAuthzUrlChange = (event: ChangeEvent<HTMLInputElement>) =>
     setAuthzEndpoint(event.target.value);
@@ -25,8 +26,6 @@ export function useServerConfig(
 
   const component = (
     <ServerFields
-      labelClass={labelClass}
-      inputClass={inputClass}
       authzEndpoint={authzEndpoint}
       tokenEndpoint={tokenEndpoint}
       onAuthzUrlChange={handleAuthzUrlChange}

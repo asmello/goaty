@@ -1,0 +1,8 @@
+.item {
+  display: flex;
+}
+
+.removeButton {
+  max-width: fit-content;
+  margin-left: var(--spacing);
+}

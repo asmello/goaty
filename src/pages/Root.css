@@ -1,52 +1,10 @@
-header > a.active {
-  text-decoration: underline;
+#root > header {
+  padding: 0 calc(var(--spacing) / 2);
+  box-shadow: 0 1px 0 rgba(115, 130, 140, 0.2);
 }
 
-#root-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-#root-container > section {
-  flex-grow: 1;
-  background-color: #f2f2f2;
-}
-
-footer {
+#root > footer {
+  padding: var(--spacing) 0;
   text-align: center;
-}
-
-section {
-  display: flex;
-  align-items: center;
-}
-
-.card.shadow {
-  box-shadow: 5px 5px 5px #ddd;
-}
-
-.responsive-label {
-  align-items: center;
-}
-
-@media (min-width: 775px) {
-  .responsive-label [class|="col"]:has(label) {
-    text-align: right;
-  }
-}
-
-fieldset {
-  margin: var(--universal-margin) var(--universal-margin)
-    calc(2 * var(--universal-margin)) var(--universal-margin);
-  flex-grow: 1;
-}
-
-pre {
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-.large-container {
-  max-width: 800px;
+  box-shadow: 0 -1px 0 rgba(115, 130, 140, 0.2);
 }

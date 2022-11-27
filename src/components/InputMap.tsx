@@ -1,3 +1,5 @@
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import InputMapItem, { MapItem } from "./InputMapItem";
 
 interface InputMapProps {
@@ -41,11 +43,9 @@ export default function InputMap({
   return (
     <>
       {values}
-      <div className="row">
-        <button type="button" className="small add-button" onClick={onCreate}>
-          <b>+</b>
-        </button>
-      </div>
+      <button type="button" className="outline" onClick={onCreate}>
+        <FontAwesomeIcon icon={faPlus} />
+      </button>
     </>
   );
 }

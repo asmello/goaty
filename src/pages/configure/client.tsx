@@ -6,10 +6,11 @@ export interface ClientConfig {
   clientSecret: string;
 }
 
-export function useClientConfig(
-  labelClass: string,
-  inputClass: string
-): [ClientConfig, (newConfig: ClientConfig) => void, JSX.Element] {
+export function useClientConfig(): [
+  ClientConfig,
+  (newConfig: ClientConfig) => void,
+  JSX.Element
+] {
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
 
@@ -20,8 +21,6 @@ export function useClientConfig(
 
   const component = (
     <ClientFields
-      labelClass={labelClass}
-      inputClass={inputClass}
       clientId={clientId}
       clientSecret={clientSecret}
       onClientIdChange={setClientId}

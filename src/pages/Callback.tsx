@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import State from "../common/State";
-import centralStyle from "../common/central.module.css";
-import "./Callback.module.css";
+import style from "./Callback.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 
 interface TokenResponse {
   access_token: string;
@@ -18,32 +19,27 @@ export default function Callback() {
   const [tokenResponse, setTokenResponse] = useState<TokenResponse>();
   const [axiosError, setAxiosError] = useState<AxiosError>();
   const state = searchParams.get("state");
+  const [expireTime, setExpireTime] = useState<Date>();
+
   if (state === null) {
     return (
-      <>
-        <input
-          type="checkbox"
-          id="modal-control"
-          className="modal"
-          defaultChecked
-          onChange={(event) => {
-            if (!event.target.checked) navigateToConfigure();
-          }}
-        />
-        <div>
-          <div className="card">
-            <label htmlFor="modal-control" className="modal-close"></label>
-            <h3 className="section">Error</h3>
-
-            <div className="section">
-              <p>
-                The remote server did not return the <code>state</code>
-                parameter.
-              </p>
-            </div>
-          </div>
-        </div>
-      </>
+      <dialog open>
+        <article>
+          <header className="centered-text">Error</header>
+          <p>
+            The <code>state</code> parameter is missing.
+          </p>
+          <footer className="centered-text">
+            <button
+              className="inline"
+              role="button"
+              onClick={() => navigate("/configure")}
+            >
+              Start over
+            </button>
+          </footer>
+        </article>
+      </dialog>
     );
   }
 
@@ -66,58 +62,45 @@ export default function Callback() {
         </a>
       );
     return (
-      <>
-        <input
-          type="checkbox"
-          id="modal-control"
-          className="modal"
-          defaultChecked
-          onChange={(event) => {
-            if (!event.target.checked) navigateToConfigure();
-          }}
-        />
-        <div>
-          <div className="card">
-            <label htmlFor="modal-control" className="modal-close"></label>
-            <h3 className="section">Error</h3>
-
-            <div className="section">
-              <p>The remote server returned an error: {errorElement}</p>
-              {description && <blockquote>{description}</blockquote>}
-            </div>
-          </div>
-        </div>
-      </>
+      <dialog open>
+        <article>
+          <header className="centered-text">Error</header>
+          <p>The remote server returned an error: {errorElement}</p>
+          {description && <blockquote>{description}</blockquote>}
+          <footer className="centered-text">
+            <button
+              className="inline"
+              role="button"
+              onClick={navigateToConfigure}
+            >
+              Start over
+            </button>
+          </footer>
+        </article>
+      </dialog>
     );
   }
 
   const code = searchParams.get("code");
   if (code === null) {
     return (
-      <>
-        <input
-          type="checkbox"
-          id="modal-control"
-          className="modal"
-          defaultChecked
-          onChange={(event) => {
-            if (!event.target.checked) navigateToConfigure();
-          }}
-        />
-        <div>
-          <div className="card">
-            <label htmlFor="modal-control" className="modal-close"></label>
-            <h3 className="section">Error</h3>
-
-            <div className="section">
-              <p>
-                The remote server did not return the <code>code</code>
-                parameter.
-              </p>
-            </div>
-          </div>
-        </div>
-      </>
+      <dialog open>
+        <article>
+          <header className="centered-text">Error</header>
+          <p>
+            The remote server did not return the <code>code</code> parameter.
+          </p>
+          <footer className="centered-text">
+            <button
+              className="inline"
+              role="button"
+              onClick={navigateToConfigure}
+            >
+              Start over
+            </button>
+          </footer>
+        </article>
+      </dialog>
     );
   }
 
@@ -152,92 +135,125 @@ export default function Callback() {
     }
   }, []);
 
+  useEffect(() => {
+    if (tokenResponse) {
+      setExpireTime(
+        new Date(new Date().getTime() + tokenResponse.expires_in * 1000)
+      );
+    }
+  }, [tokenResponse]);
+
   if (!tokenResponse) {
     if (axiosError) {
       return (
-        <div className={centralStyle.central}>
-          <div className="card fluid">
-            <div className="section">
-              <h3>
-                <mark className="secondary">{axiosError.code}</mark>
-                <small>{axiosError.message}</small>
-              </h3>
-            </div>
+        <dialog open>
+          <article>
+            <header className="centered-text">
+              <hgroup>
+                <h1>
+                  <mark className="error">{axiosError.code}</mark>
+                </h1>
+                <h2>{axiosError.message}</h2>
+              </hgroup>
+            </header>
             {axiosError.response && (
-              <div className="section">
+              <>
                 <p>Server response:</p>
-                <pre>{JSON.stringify(axiosError.response.data)}</pre>
-              </div>
+                <pre className="wrap">
+                  {JSON.stringify(axiosError.response.data, null, "  ")}
+                </pre>
+              </>
             )}
-            <div className="section centered">
-              <Link role="button" to={configureFragment} className="primary">
-                Start again
-              </Link>
-            </div>
-          </div>
-        </div>
+            <footer className="centered-text">
+              <button
+                className="inline"
+                role="button"
+                onClick={navigateToConfigure}
+              >
+                Start over
+              </button>
+            </footer>
+          </article>
+        </dialog>
       );
     } else {
       return (
-        <div className={centralStyle.central}>
-          <div className="card fluid">
-            <div className="section">
-              <h3>
-                <span>Token Unavailable</span>
-                <small>Unknown Error</small>
-              </h3>
-            </div>
-            <div className="section centered">
-              <Link role="button" to={configureFragment} className="primary">
-                Start again
-              </Link>
-            </div>
-          </div>
-        </div>
+        <dialog open>
+          <article className="centered-text">
+            <header className="oneliner">
+              <h1>Token Unavailable</h1>
+            </header>
+            <p>Unknown Error</p>
+            <footer className="centered-text">
+              <button
+                className="inline"
+                role="button"
+                onClick={navigateToConfigure}
+              >
+                Start over
+              </button>
+            </footer>
+          </article>
+        </dialog>
       );
     }
   }
 
-  const expireTime = new Date(
-    new Date().getTime() + tokenResponse.expires_in * 1000
-  );
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => console.log("SUCCESS"))
+      .catch(() => console.log("FAILED"));
+  };
 
   return (
-    <div className={`large-container ${centralStyle.central}`}>
-      <div className="card fluid shadow">
-        <div className="section">
-          <h1>
-            Result <small>Got a {tokenResponse.token_type} token!</small>
-          </h1>
-          <div className="collapse">
-            <input
-              type="checkbox"
-              id="collapse-access-token"
-              aria-hidden="true"
-              defaultChecked={false}
-            />
-            <label htmlFor="collapse-access-token" aria-hidden>
-              Access Token
-            </label>
-            <div>
-              <textarea readOnly rows={5} value={tokenResponse.access_token} />
-              <p>{`This token expires at ${expireTime.toLocaleString()}`}</p>
-            </div>
-            <input
-              type="checkbox"
-              id="collapse-refresh-token"
-              aria-hidden="true"
-              defaultChecked={false}
-            />
-            <label htmlFor="collapse-refresh-token" aria-hidden>
-              Refresh Token
-            </label>
-            <div>
-              <textarea readOnly value={tokenResponse.refresh_token} />
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="centered">
+      <article className={style.result}>
+        <hgroup>
+          <h1>Success</h1>
+          <h2>Got a {tokenResponse.token_type} token!</h2>
+        </hgroup>
+
+        <details>
+          <summary className="copyable">
+            <button
+              className="inline small"
+              role="button"
+              onClick={() => copyToClipboard(tokenResponse.access_token)}
+            >
+              <FontAwesomeIcon icon={faClipboard} />
+            </button>
+            <span>Access Token</span>
+          </summary>
+          <textarea
+            className="code"
+            readOnly
+            rows={5}
+            value={tokenResponse.access_token}
+          />
+          {expireTime && (
+            <p>{`This token expires at ${expireTime.toLocaleString()}`}</p>
+          )}
+        </details>
+
+        <details>
+          <summary className="copyable">
+            <button
+              className="inline small"
+              role="button"
+              onClick={() => copyToClipboard(tokenResponse.refresh_token)}
+            >
+              <FontAwesomeIcon icon={faClipboard} />
+            </button>
+            <span>Refresh Token</span>
+          </summary>
+          <textarea
+            className="code"
+            readOnly
+            value={tokenResponse.refresh_token}
+          />
+        </details>
+      </article>
     </div>
   );
 }

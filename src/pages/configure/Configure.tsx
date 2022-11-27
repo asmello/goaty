@@ -1,6 +1,4 @@
 import { FormEvent, useEffect, useState } from "react";
-import centralStyle from "../../common/central.module.css";
-import style from "./Configure.module.css";
 import State from "../../common/State";
 import { ServerConfig, useServerConfig } from "./server";
 import { ClientConfig, useClientConfig } from "./client";
@@ -11,6 +9,9 @@ import { useSearchParams } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import { Item } from "../../components/InputListItem";
 import { MapItem } from "../../components/InputMapItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import style from "./Configure.module.css";
+import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 
 export default function Configure() {
   const redirectUri = window.location.href.replace(/configure.*/, "callback");
@@ -18,24 +19,18 @@ export default function Configure() {
   const labelClass = "col-sm-12 col-md-3";
   const inputClass = "col-sm-12 col-md";
 
-  const [serverConfig, setServerConfig, serverFields] = useServerConfig(
-    labelClass,
-    inputClass
-  );
-  const [clientConfig, setClientConfig, clientFields] = useClientConfig(
-    labelClass,
-    inputClass
-  );
-  const [scopes, setScopes, scopesFields] = useScopes();
-  const [extras, setExtras, extrasFields] = useExtras();
-  const [options, setOptions, optionsFields] = useOptions();
+  const [serverConfig, setServerConfig, serverFieldset] = useServerConfig();
+  const [clientConfig, setClientConfig, clientFieldset] = useClientConfig();
+  const [scopes, setScopes, scopesFieldset] = useScopes();
+  const [extras, setExtras, extrasFieldset] = useExtras();
+  const [options, setOptions, optionsFieldset] = useOptions();
 
   const [searchParams] = useSearchParams();
   const [state, setState] = useState(searchParams.get("state"));
 
-  const [linkCopiedState, setLinkCopiedState] = useState<
-    "SUCCESS" | "FAILED" | "IDLE"
-  >();
+  const [shareModalState, setShareModalState] = useState<
+    "CLOSED" | "OPEN" | "SUCCESS" | "FAILED"
+  >("CLOSED");
 
   useEffect(() => {
     if (state) {
@@ -136,120 +131,120 @@ export default function Configure() {
 
       navigator.clipboard
         .writeText(url.toString())
-        .then(() => setLinkCopiedState("SUCCESS"))
-        .catch(() => setLinkCopiedState("FAILED"));
+        .then(() => setShareModalState("SUCCESS"))
+        .catch(() => setShareModalState("FAILED"));
     } else {
       console.warn("Tried to copy link with null state");
     }
   };
 
-  const handleAcceptShareDialogChange = (checked: boolean) => {
-    if (checked) {
-      if (clientConfig.clientSecret === "") {
-        copyShareLink();
-      }
-    } else {
-      setLinkCopiedState("IDLE");
-    }
-  };
-
-  const acceptShareDialogContents = () => {
-    if (linkCopiedState === "SUCCESS") {
+  const shareModalContents = () => {
+    if (shareModalState === "SUCCESS") {
       return (
-        <>
-          <h3 className="section">Success</h3>
-          <div className="section centered-text">
-            <p>Link successfully copied to clipboard.</p>
-          </div>
-        </>
+        <article>
+          <header>
+            <a
+              aria-label="Close"
+              className="close"
+              onClick={() => setShareModalState("CLOSED")}
+            />
+            Success
+          </header>
+          <p>The share URL has been copied to the clipboard.</p>
+        </article>
       );
     }
 
-    if (linkCopiedState === "FAILED") {
+    if (shareModalState === "FAILED") {
       return (
-        <>
-          <h3 className="section">Failure</h3>
-          <div className="section centered-text">
-            <p>Unable to copy link to clipboard.</p>
-            <p>Check your permissions.</p>
-          </div>
-        </>
+        <article>
+          <header>
+            <a
+              aria-label="Close"
+              className="close"
+              onClick={() => setShareModalState("CLOSED")}
+            />
+            Failure
+          </header>
+          <p>The share URL could not be copied to the clipboard.</p>
+          <p>This could be due to a permissions issue.</p>
+        </article>
       );
     }
 
     return (
-      <>
-        <h3 className="section">Warning</h3>
-        <div className="section centered-text">
-          <p>
-            This URL contains your client secret. Keep it safe and{" "}
-            <b>do not share with unauthorized parties</b>.
-          </p>
-          <button className="warning" onClick={copyShareLink}>
-            Understood
+      <article>
+        <header>
+          <a
+            aria-label="Close"
+            className="close"
+            onClick={() => setShareModalState("CLOSED")}
+          />
+          Warning
+        </header>
+        <p>This URL contains your client secret.</p>
+        <p>
+          Keep it safe and <b>do not share with unauthorized parties</b>.
+        </p>
+        <footer>
+          <button
+            role="button"
+            className="inline secondary"
+            onClick={() => setShareModalState("CLOSED")}
+          >
+            Cancel
           </button>
-        </div>
-      </>
+          <button className="inline" role="button" onClick={copyShareLink}>
+            Proceed
+          </button>
+        </footer>
+      </article>
     );
   };
 
-  return (
-    <div className={`large-container ${centralStyle.central}`}>
-      <div className="card fluid shadow">
-        <div className="section">
-          <div className="row">
-            <div className="col-sm">
-              <h3>Configuration</h3>
-            </div>
-            <button
-              type="button"
-              className={`small ${style.shareButton}`}
-              disabled={state === null}
-            >
-              <label htmlFor="accept-share">
-                <span className="icon-share" />
-              </label>
-            </button>
+  const handleShareClick = () => {
+    if (clientConfig.clientSecret) {
+      setShareModalState("OPEN");
+    } else {
+      copyShareLink();
+    }
+  };
 
-            <input
-              type="checkbox"
-              id="accept-share"
-              className="modal"
-              onChange={(event) =>
-                handleAcceptShareDialogChange(event.target.checked)
-              }
-            />
-            <div>
-              <div className="card">
-                <label htmlFor="accept-share" className="modal-close" />
-                {acceptShareDialogContents()}
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-sm">
-              <form onSubmit={handleSubmit}>
-                <>
-                  {serverFields}
-                  {clientFields}
-                  <div className="row">
-                    <div className="col-sm">{scopesFields}</div>
-                    <div className="col-sm">{optionsFields}</div>
-                  </div>
-                  <div className="row">{extrasFields}</div>
-                  <div className="row responsive-label">
-                    <div className="col-sm" />
-                    <div className="col-sm-3">
-                      <input type="submit" className="primary" value="Go" />
-                    </div>
-                    <div className="col-sm" />
-                  </div>
-                </>
-              </form>
-            </div>
-          </div>
+  return (
+    <article>
+      <button
+        id={style.shareButton}
+        role="button"
+        className="small inline secondary"
+        onClick={handleShareClick}
+      >
+        <FontAwesomeIcon icon={faClipboard} />
+      </button>
+
+      <dialog open={shareModalState !== "CLOSED"}>
+        {shareModalContents()}
+      </dialog>
+
+      <h3>Configuration</h3>
+      <form onSubmit={handleSubmit}>
+        <div className="grid">
+          {serverFieldset}
+          {clientFieldset}
         </div>
-      </div>
-    </div>
+        <div className="grid">
+          {scopesFieldset}
+          {extrasFieldset}
+        </div>
+        <div className="grid">
+          {optionsFieldset}
+          <input
+            id={style.submitButton}
+            type="submit"
+            className="primary standalone"
+            value="Go"
+          />
+        </div>
+      </form>
+    </article>
   );
 }

@@ -2,3 +2,16 @@
   border-color: var(--input-invalid-color);
   box-shadow: none;
 }
+
+.item {
+  display: flex;
+  margin-right: calc(-1 * var(--spacing));
+}
+
+.item > * {
+  margin-right: var(--spacing);
+}
+
+.removeButton {
+  max-width: fit-content;
+}

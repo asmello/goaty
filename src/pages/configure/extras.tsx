@@ -9,7 +9,7 @@ export function useExtras(): [
   const [extras, setExtras, extrasComponent] = useInputMap();
 
   const component = (
-    <fieldset>
+    <fieldset className="visible">
       <>
         <legend>Extra Parameters</legend>
         {extrasComponent}

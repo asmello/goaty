@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import InputListItem, { Item } from "./InputListItem";
 
 interface InputListProps {
@@ -26,11 +28,9 @@ export default function InputList({
   return (
     <>
       {values}
-      <div className="row">
-        <button type="button" className="small add-button" onClick={onCreate}>
-          <b>+</b>
-        </button>
-      </div>
+      <button type="button" className="outline" onClick={onCreate}>
+        <FontAwesomeIcon icon={faPlus} />
+      </button>
     </>
   );
 }
