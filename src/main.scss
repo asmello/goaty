@@ -17,12 +17,12 @@ $enable-semantic-container: true;
 
 @media only screen and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --fieldset-border-color: hsl(205, 16%, 25%);
+    --fieldset-border-color: hsl(205, 16%, 18%);
   }
 }
 
 [data-theme="dark"] {
-  --fieldset-border-color: hsl(205, 16%, 25%);
+  --fieldset-border-color: hsl(205, 16%, 18%);
 }
 
 html,
