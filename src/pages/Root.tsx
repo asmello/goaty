@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMoon } from "@fortawesome/free-regular-svg-icons";
+import { faMoon } from "@fortawesome/free-solid-svg-icons";
 import "./Root.css";
 import { useState } from "react";
 
@@ -45,7 +45,7 @@ export default function Root() {
                   checked={darkModeEnabled}
                   onChange={(event) => setDarkMode(event.target.checked)}
                 />
-                <FontAwesomeIcon icon={faMoon} />
+                <FontAwesomeIcon icon={faMoon} size="lg" />
               </label>
             </li>
           </ul>
