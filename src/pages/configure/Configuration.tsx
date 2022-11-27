@@ -10,7 +10,7 @@ import { v4 as uuid } from "uuid";
 import { Item } from "../../components/InputListItem";
 import { MapItem } from "../../components/InputMapItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import style from "./Configure.module.css";
+import style from "./Configuration.module.css";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 
 export default function Configure() {

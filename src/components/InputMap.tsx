@@ -43,7 +43,7 @@ export default function InputMap({
   return (
     <>
       {values}
-      <button type="button" className="outline" onClick={onCreate}>
+      <button type="button" className="outline secondary" onClick={onCreate}>
         <FontAwesomeIcon icon={faPlus} />
       </button>
     </>

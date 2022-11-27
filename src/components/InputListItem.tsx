@@ -30,7 +30,7 @@ export default function InputListItem({
       <input type="text" value={value} onChange={handleChange} />
       <button
         type="button"
-        className={style.removeButton}
+        className={`secondary ${style.removeButton}`}
         onClick={() => onDelete(id)}
       >
         <FontAwesomeIcon icon={faMinus} />

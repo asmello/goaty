@@ -5,3 +5,10 @@
 [ ] Implement CSS transitions
 [ ] Implement accessibility
 [ ] Avoid flashing states during updates
+[ ] Option to renew token
+[ ] Add tooltips
+[ ] Add toasters
+[ ] Write about page
+[ ] Darkmode cookie
+[ ] Add breadcrumb
+[ ] Refactor Configuration component

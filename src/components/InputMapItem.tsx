@@ -51,7 +51,7 @@ export default function InputMapItem({
       />
       <button
         type="button"
-        className={style.removeButton}
+        className={`secondary ${style.removeButton}`}
         onClick={() => onDelete(item.id)}
       >
         <FontAwesomeIcon icon={faMinus} />

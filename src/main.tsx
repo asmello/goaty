@@ -6,7 +6,7 @@ import Home from "./pages/Home";
 import Root from "./pages/Root";
 import About from "./pages/About";
 import Callback from "./pages/Callback";
-import Configure from "./pages/configure/Configure";
+import Configure from "./pages/configure/Configuration";
 
 const router = createBrowserRouter([
   {
