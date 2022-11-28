@@ -71,6 +71,10 @@ fieldset.visible > legend {
   padding: 0 calc(var(--spacing) / 2);
 }
 
+fieldset.tight {
+  margin: 0;
+}
+
 .active {
   --background-color: var(--primary-focus);
 }
