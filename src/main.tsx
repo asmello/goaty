@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./main.scss";
-import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import Root from "./pages/Root";
 import About from "./pages/About";
 import Callback from "./pages/Callback";
-import Configure, { loadState } from "./pages/configure/Configuration";
+import Configuration, { loadState } from "./pages/configure/Configuration";
 
 const router = createBrowserRouter([
   {
@@ -18,7 +18,7 @@ const router = createBrowserRouter([
         index: true,
       },
       {
-        element: <Configure />,
+        element: <Configuration />,
         path: "configure",
         loader: loadState,
       },
