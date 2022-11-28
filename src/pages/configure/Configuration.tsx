@@ -27,7 +27,7 @@ interface ConfigurationData {
 
 type ShareModalState = "CLOSED" | "OPEN" | "SUCCESS" | "FAILED";
 
-export async function loadState({
+export async function loader({
   request,
 }: LoaderFunctionArgs): Promise<ConfigurationData | undefined> {
   const requestUrl = new URL(request.url);

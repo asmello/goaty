@@ -5,8 +5,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import Root from "./pages/Root";
 import About from "./pages/About";
-import Callback from "./pages/Callback";
-import Configuration, { loadState } from "./pages/configure/Configuration";
+import Callback, { loader as callbackLoader } from "./pages/Callback";
+import Configuration, {
+  loader as configurationLoader,
+} from "./pages/configure/Configuration";
 
 const router = createBrowserRouter([
   {
@@ -20,11 +22,12 @@ const router = createBrowserRouter([
       {
         element: <Configuration />,
         path: "configure",
-        loader: loadState,
+        loader: configurationLoader,
       },
       {
         element: <Callback />,
         path: "callback",
+        loader: callbackLoader,
       },
       {
         element: <About />,
