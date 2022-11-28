@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import style from "./Configuration.module.css";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 
-interface Configuration {
+interface ConfigurationData {
   serverConfig: ServerConfig;
   clientConfig: ClientConfig;
   scopes: Item[];
@@ -25,9 +25,11 @@ interface Configuration {
   options: Options;
 }
 
+type ShareModalState = "CLOSED" | "OPEN" | "SUCCESS" | "FAILED";
+
 export async function loadState({
   request,
-}: LoaderFunctionArgs): Promise<Configuration | undefined> {
+}: LoaderFunctionArgs): Promise<ConfigurationData | undefined> {
   const requestUrl = new URL(request.url);
   const state = requestUrl.searchParams.get("state");
   if (!state) return undefined;
@@ -75,7 +77,7 @@ export async function loadState({
   };
 }
 
-export default function Configure() {
+export default function Configuration() {
   const [serverConfig, setServerConfig, serverFieldset] = useServerConfig();
   const [clientConfig, setClientConfig, clientFieldset] = useClientConfig();
   const [scopes, setScopes, scopesFieldset] = useScopes();
@@ -85,11 +87,10 @@ export default function Configure() {
   const [searchParams] = useSearchParams();
   const [state, setState] = useState(searchParams.get("state"));
 
-  const [shareModalState, setShareModalState] = useState<
-    "CLOSED" | "OPEN" | "SUCCESS" | "FAILED"
-  >("CLOSED");
+  const [shareModalState, setShareModalState] =
+    useState<ShareModalState>("CLOSED");
 
-  const config = useLoaderData() as Configuration | undefined;
+  const config = useLoaderData() as ConfigurationData | undefined;
 
   useEffect(() => {
     if (config) {
