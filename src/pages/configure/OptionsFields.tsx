@@ -24,7 +24,6 @@ export default function OptionsFields({
       <label>
         <input
           type="checkbox"
-          role="switch"
           checked={sendUri}
           onChange={(event) => onSendUriChange(event.target.checked)}
         />
@@ -34,7 +33,6 @@ export default function OptionsFields({
       <label className={style.final}>
         <input
           type="checkbox"
-          role="switch"
           checked={proxyEnabled}
           onChange={(event) => onProxyEnabledChange(event.target.checked)}
         />
