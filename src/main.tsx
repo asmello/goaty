@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./main.scss";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import Root from "./pages/Root";
 import About from "./pages/About";
 import Callback from "./pages/Callback";
-import Configure from "./pages/configure/Configuration";
+import Configure, { loadState } from "./pages/configure/Configuration";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +20,7 @@ const router = createBrowserRouter([
       {
         element: <Configure />,
         path: "configure",
+        loader: loadState,
       },
       {
         element: <Callback />,

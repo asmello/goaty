@@ -5,7 +5,11 @@ import { ClientConfig, useClientConfig } from "./client";
 import { Options, useOptions } from "./options";
 import { useScopes } from "./scopes";
 import { useExtras } from "./extras";
-import { useSearchParams } from "react-router-dom";
+import {
+  LoaderFunctionArgs,
+  useLoaderData,
+  useSearchParams,
+} from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import { Item } from "../../components/InputListItem";
 import { MapItem } from "../../components/InputMapItem";
@@ -13,9 +17,65 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import style from "./Configuration.module.css";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 
-export default function Configure() {
-  const redirectUri = window.location.href.replace(/configure.*/, "callback");
+interface Configuration {
+  serverConfig: ServerConfig;
+  clientConfig: ClientConfig;
+  scopes: Item[];
+  extras: MapItem[];
+  options: Options;
+}
 
+export async function loadState({
+  request,
+}: LoaderFunctionArgs): Promise<Configuration | undefined> {
+  const requestUrl = new URL(request.url);
+  const state = requestUrl.searchParams.get("state");
+  if (!state) return undefined;
+
+  const decodedState: State = JSON.parse(atob(state));
+
+  const decodedServerConfig: ServerConfig = {
+    authzEndpoint: decodedState.z,
+    tokenEndpoint: decodedState.t,
+  };
+
+  const decodedClientConfig: ClientConfig = {
+    clientId: decodedState.i,
+    clientSecret: decodedState.s,
+  };
+
+  const decodedScopes =
+    decodedState.c
+      ?.split(" ")
+      .map<Item>((scope) => ({ id: uuid(), value: scope })) ?? [];
+
+  const decodedExtras = decodedState.x
+    ? Object.entries(decodedState.x).map<MapItem>(([key, value]) => ({
+        id: uuid(),
+        key: key,
+        value: value,
+      }))
+    : [];
+
+  const decodedOptions: Options = {
+    proxyEnabled: decodedState.p !== undefined,
+    proxyUrl: decodedState.p,
+    sendUri: decodedState.r ?? false,
+  };
+
+  const url = new URL(window.location.href.replace(/\?.*/, ""));
+  window.history.replaceState(null, "", url);
+
+  return {
+    serverConfig: decodedServerConfig,
+    clientConfig: decodedClientConfig,
+    scopes: decodedScopes,
+    extras: decodedExtras,
+    options: decodedOptions,
+  };
+}
+
+export default function Configure() {
   const [serverConfig, setServerConfig, serverFieldset] = useServerConfig();
   const [clientConfig, setClientConfig, clientFieldset] = useClientConfig();
   const [scopes, setScopes, scopesFieldset] = useScopes();
@@ -29,47 +89,17 @@ export default function Configure() {
     "CLOSED" | "OPEN" | "SUCCESS" | "FAILED"
   >("CLOSED");
 
+  const config = useLoaderData() as Configuration | undefined;
+
   useEffect(() => {
-    if (state) {
-      const decodedState: State = JSON.parse(atob(state));
-
-      const decodedServerConfig: ServerConfig = {
-        authzEndpoint: decodedState.z,
-        tokenEndpoint: decodedState.t,
-      };
-      setServerConfig(decodedServerConfig);
-
-      const decodedClientConfig: ClientConfig = {
-        clientId: decodedState.i,
-        clientSecret: decodedState.s,
-      };
-      setClientConfig(decodedClientConfig);
-
-      const decodedScopes = decodedState.c
-        ?.split(" ")
-        .map<Item>((scope) => ({ id: uuid(), value: scope }));
-      if (decodedScopes) {
-        setScopes(decodedScopes);
-      }
-
-      if (decodedState.x) {
-        const decodedExtras = Object.entries(decodedState.x).map<MapItem>(
-          ([key, value]) => ({ id: uuid(), key: key, value: value })
-        );
-        setExtras(decodedExtras);
-      }
-
-      const decodedOptions: Options = {
-        proxyEnabled: decodedState.p !== undefined,
-        proxyUrl: decodedState.p,
-        sendUri: decodedState.r ?? false,
-      };
-      setOptions(decodedOptions);
-
-      const url = new URL(window.location.href.replace(/\?.*/, ""));
-      window.history.replaceState(null, "", url);
+    if (config) {
+      setServerConfig(config.serverConfig);
+      setClientConfig(config.clientConfig);
+      setScopes(config.scopes);
+      setExtras(config.extras);
+      setOptions(config.options);
     }
-  }, []);
+  }, [config]);
 
   useEffect(() => {
     let newState: State = {
@@ -107,7 +137,10 @@ export default function Configure() {
       state: state,
     };
     if (options.sendUri) {
-      params.redirect_uri = redirectUri;
+      params.redirect_uri = window.location.href.replace(
+        /configure.*/,
+        "callback"
+      );
     }
     const extrasRecords: Record<string, string> = {};
     extras.forEach((item) => {
