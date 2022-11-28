@@ -41,6 +41,15 @@ main {
   flex-grow: 1;
 }
 
+main > article {
+  margin: 0;
+  padding: calc(2 * var(--spacing))
+}
+
+form:last-child {
+  margin: 0;
+}
+
 .centered {
   display: grid;
   place-items: center;
