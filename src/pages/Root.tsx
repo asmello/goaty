@@ -4,7 +4,11 @@ import { faMoon } from "@fortawesome/free-solid-svg-icons";
 import "./Root.css";
 import { useState } from "react";
 
-export default function Root() {
+interface RootProps {
+  children?: JSX.Element;
+}
+
+export default function Root({ children }: RootProps) {
   const [darkModeEnabled, setDarkModeEnabled] = useState(
     () => window.matchMedia("(prefers-color-scheme: dark)").matches
   );
@@ -51,9 +55,7 @@ export default function Root() {
           </ul>
         </nav>
       </header>
-      <main>
-        <Outlet />
-      </main>
+      <main>{children || <Outlet />}</main>
       <footer>
         Find me at <a href="https://github.com/asmello/goaty">Github</a>.
       </footer>

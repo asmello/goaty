@@ -38,11 +38,6 @@ export default function Error() {
           <h2>{header}</h2>
         </header>
         <p>{message}</p>
-        <footer>
-          <Link role="button" to="/">
-            Go home
-          </Link>
-        </footer>
       </article>
     </div>
   );
