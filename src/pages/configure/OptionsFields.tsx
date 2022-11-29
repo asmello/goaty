@@ -23,6 +23,7 @@ export default function OptionsFields({
 
       <label>
         <input
+          name="sendUri"
           type="checkbox"
           checked={sendUri}
           onChange={(event) => onSendUriChange(event.target.checked)}

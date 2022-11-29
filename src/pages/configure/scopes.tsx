@@ -10,10 +10,13 @@ export function useScopes(): [
 
   const wrappedComponent = (
     <fieldset className="visible">
-      <>
-        <legend>Scopes</legend>
-        {scopesComponent}
-      </>
+      <legend>Scopes</legend>
+      {scopesComponent}
+      <input
+        name="scopes"
+        type="hidden"
+        value={scopes.map(({ value }) => value).join(" ")}
+      />
     </fieldset>
   );
 

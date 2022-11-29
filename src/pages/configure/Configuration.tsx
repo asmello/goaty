@@ -6,7 +6,10 @@ import { Options, useOptions } from "./options";
 import { useScopes } from "./scopes";
 import { useExtras } from "./extras";
 import {
+  ActionFunctionArgs,
+  Form,
   LoaderFunctionArgs,
+  redirect,
   useLoaderData,
   useSearchParams,
 } from "react-router-dom";
@@ -77,6 +80,39 @@ export async function loader({
   };
 }
 
+export async function action({ request }: ActionFunctionArgs) {
+  const data = Object.fromEntries(await request.formData());
+  console.log(data);
+  const state = data.state.toString();
+  const clientId = data.clientId.toString();
+  const authzEndpoint = data.authzEndpoint.toString();
+
+  const redirectUrl = new URL(authzEndpoint);
+  redirectUrl.searchParams.set("response_type", "code");
+  redirectUrl.searchParams.set("client_id", clientId);
+  redirectUrl.searchParams.set("state", state);
+
+  const sendUri = data.sendUri.toString();
+  if (sendUri) {
+    redirectUrl.searchParams.set(
+      "redirect_uri",
+      window.location.href.replace(/configure.*/, "callback")
+    );
+  }
+
+  const extras: [string, string][] = JSON.parse(data.extras.toString());
+  extras.forEach(([key, value]) => {
+    redirectUrl.searchParams.set(key, value);
+  });
+
+  const scopes = data.scopes.toString();
+  if (scopes) {
+    redirectUrl.searchParams.set("scope", scopes);
+  }
+
+  window.location.href = redirectUrl.toString();
+}
+
 export default function Configuration() {
   const [serverConfig, setServerConfig, serverFieldset] = useServerConfig();
   const [clientConfig, setClientConfig, clientFieldset] = useClientConfig();
@@ -127,34 +163,6 @@ export default function Configuration() {
     setState(newStateString);
   }, [serverConfig, clientConfig, scopes, extras, options]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!state) {
-      return; // TODO: error
-    }
-    let params: Record<string, string> = {
-      response_type: "code",
-      client_id: clientConfig.clientId,
-      state: state,
-    };
-    if (options.sendUri) {
-      params.redirect_uri = window.location.href.replace(
-        /configure.*/,
-        "callback"
-      );
-    }
-    const extrasRecords: Record<string, string> = {};
-    extras.forEach((item) => {
-      params[item.key] = item.value;
-      extrasRecords[item.key] = item.value;
-    });
-    if (scopes.length > 0) {
-      params.scope = scopes.map((scope) => scope.value).join(" ");
-    }
-    const encodedParams = new URLSearchParams(params).toString();
-    window.location.href = `${serverConfig.authzEndpoint}?${encodedParams}`;
-  };
-
   const copyShareLink = () => {
     if (state) {
       const url = new URL(window.location.toString());
@@ -165,7 +173,7 @@ export default function Configuration() {
         .then(() => setShareModalState("SUCCESS"))
         .catch(() => setShareModalState("FAILED"));
     } else {
-      console.warn("Tried to copy link with null state");
+      console.warn("Tried to copy link with undefined state");
     }
   };
 
@@ -257,7 +265,7 @@ export default function Configuration() {
       </dialog>
 
       <h3>Configuration</h3>
-      <form onSubmit={handleSubmit}>
+      <Form method="post">
         <div className="grid">
           {serverFieldset}
           {clientFieldset}
@@ -275,7 +283,8 @@ export default function Configuration() {
             value="Go"
           />
         </div>
-      </form>
+        <input name="state" type="hidden" value={state || ""} />
+      </Form>
     </article>
   );
 }

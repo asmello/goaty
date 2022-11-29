@@ -10,10 +10,13 @@ export function useExtras(): [
 
   const component = (
     <fieldset className="visible">
-      <>
-        <legend>Extra Parameters</legend>
-        {extrasComponent}
-      </>
+      <legend>Extra Parameters</legend>
+      {extrasComponent}
+      <input
+        name="extras"
+        type="hidden"
+        value={JSON.stringify(extras.map(({ key, value }) => [key, value]))}
+      />
     </fieldset>
   );
 

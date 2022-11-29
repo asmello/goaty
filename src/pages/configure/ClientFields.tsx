@@ -17,6 +17,7 @@ export default function ClientFields({
       <label>
         Identifier
         <input
+          name="clientId"
           type="text"
           value={clientId}
           onChange={(event) => onClientIdChange(event.target.value)}
@@ -25,6 +26,7 @@ export default function ClientFields({
       <label>
         Secret
         <input
+          name="clientSecret"
           type="password"
           value={clientSecret}
           onChange={(event) => onClientSecretChange(event.target.value)}

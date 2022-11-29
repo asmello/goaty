@@ -8,6 +8,7 @@ import About from "./pages/About";
 import Callback, { loader as callbackLoader } from "./pages/Callback";
 import Configuration, {
   loader as configurationLoader,
+  action as configurationAction,
 } from "./pages/configure/Configuration";
 import Error from "./pages/Error";
 
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
         element: <Configuration />,
         path: "configure",
         loader: configurationLoader,
+        action: configurationAction,
       },
       {
         element: <Callback />,

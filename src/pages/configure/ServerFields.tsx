@@ -20,6 +20,7 @@ export default function ServerFields({
       <label className="doc">
         Authorization URL
         <input
+          name="authzEndpoint"
           type="url"
           value={authzEndpoint}
           onChange={onAuthzUrlChange}
@@ -30,6 +31,7 @@ export default function ServerFields({
       <label>
         Token URL
         <input
+          name="tokenEndpoint"
           type="url"
           value={tokenEndpoint}
           onChange={onTokenUrlChange}

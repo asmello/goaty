@@ -112,6 +112,10 @@ pre.wrap {
   white-space: pre-wrap;
 }
 
+header > :is(hgroup, h1, h2, h3, h4) {
+  margin-bottom: 0;
+}
+
 header.oneliner > :is(h1, h2, h3, h4) {
   margin-bottom: 0;
 }
