@@ -16,3 +16,4 @@
 [ ] Set Accept header on token request
 [ ] Make it clear only explicit mode is implemented
 [ ] Instructions/guide for configuring
+[x] Error page

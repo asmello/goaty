@@ -9,11 +9,13 @@ import Callback, { loader as callbackLoader } from "./pages/Callback";
 import Configuration, {
   loader as configurationLoader,
 } from "./pages/configure/Configuration";
+import Error from "./pages/Error";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <Error />,
     children: [
       {
         element: <Home />,
