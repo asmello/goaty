@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import State from "../../common/State";
 import { ServerConfig, useServerConfig } from "./server";
 import { ClientConfig, useClientConfig } from "./client";
@@ -8,8 +8,8 @@ import { useExtras } from "./extras";
 import {
   ActionFunctionArgs,
   Form,
+  json,
   LoaderFunctionArgs,
-  redirect,
   useLoaderData,
   useSearchParams,
 } from "react-router-dom";
@@ -19,6 +19,7 @@ import { MapItem } from "../../components/InputMapItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import style from "./Configuration.module.css";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
+import { ErrorData } from "../Error";
 
 interface ConfigurationData {
   serverConfig: ServerConfig;
@@ -68,9 +69,6 @@ export async function loader({
     sendUri: decodedState.r ?? false,
   };
 
-  const url = new URL(window.location.href.replace(/\?.*/, ""));
-  window.history.replaceState(null, "", url);
-
   return {
     serverConfig: decodedServerConfig,
     clientConfig: decodedClientConfig,
@@ -81,36 +79,48 @@ export async function loader({
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const data = Object.fromEntries(await request.formData());
-  console.log(data);
-  const state = data.state.toString();
-  const clientId = data.clientId.toString();
-  const authzEndpoint = data.authzEndpoint.toString();
+  const data = await request.formData();
 
-  const redirectUrl = new URL(authzEndpoint);
-  redirectUrl.searchParams.set("response_type", "code");
-  redirectUrl.searchParams.set("client_id", clientId);
-  redirectUrl.searchParams.set("state", state);
+  const authzEndpoint = data.get("authzEndpoint")?.toString();
+  const clientId = data.get("clientId")?.toString();
+  const state = data.get("state")?.toString();
+  if (!state || !clientId || !authzEndpoint) {
+    throw json<ErrorData>(
+      {
+        header: "Incomplete",
+        body: "Configuration payload is missing one or more required fields.",
+      },
+      400
+    );
+  }
 
-  const sendUri = data.sendUri.toString();
+  const targetUrl = new URL(authzEndpoint);
+  targetUrl.searchParams.set("response_type", "code");
+  targetUrl.searchParams.set("client_id", clientId);
+  targetUrl.searchParams.set("state", state);
+
+  const sendUri = data.get("sendUri")?.toString();
   if (sendUri) {
-    redirectUrl.searchParams.set(
+    targetUrl.searchParams.set(
       "redirect_uri",
       window.location.href.replace(/configure.*/, "callback")
     );
   }
 
-  const extras: [string, string][] = JSON.parse(data.extras.toString());
-  extras.forEach(([key, value]) => {
-    redirectUrl.searchParams.set(key, value);
-  });
-
-  const scopes = data.scopes.toString();
-  if (scopes) {
-    redirectUrl.searchParams.set("scope", scopes);
+  const extrasString = data.get("extras")?.toString();
+  if (extrasString) {
+    const extras: [string, string][] = JSON.parse(extrasString);
+    extras.forEach(([key, value]) => {
+      targetUrl.searchParams.set(key, value);
+    });
   }
 
-  window.location.href = redirectUrl.toString();
+  const scopes = data.get("scopes")?.toString();
+  if (scopes) {
+    targetUrl.searchParams.set("scope", scopes);
+  }
+
+  window.location.href = targetUrl.toString();
 }
 
 export default function Configuration() {
@@ -136,6 +146,9 @@ export default function Configuration() {
       setExtras(config.extras);
       setOptions(config.options);
     }
+
+    const url = new URL(window.location.href.replace(/\?.*/, ""));
+    window.history.replaceState(null, "", url);
   }, [config]);
 
   useEffect(() => {
