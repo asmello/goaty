@@ -11,7 +11,6 @@ import {
   json,
   LoaderFunctionArgs,
   useLoaderData,
-  useSearchParams,
 } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import { Item } from "../../components/InputListItem";
@@ -20,6 +19,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import style from "./Configuration.module.css";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { ErrorData } from "../Error";
+import ShareModal, { ShareModalState } from "./ShareModal";
 
 interface ConfigurationData {
   serverConfig: ServerConfig;
@@ -28,8 +28,6 @@ interface ConfigurationData {
   extras: MapItem[];
   options: Options;
 }
-
-type ShareModalState = "CLOSED" | "OPEN" | "SUCCESS" | "FAILED";
 
 export async function loader({
   request,
@@ -129,10 +127,7 @@ export default function Configuration() {
   const [scopes, setScopes, scopesFieldset] = useScopes();
   const [extras, setExtras, extrasFieldset] = useExtras();
   const [options, setOptions, optionsFieldset] = useOptions();
-
-  const [searchParams] = useSearchParams();
-  const [state, setState] = useState(searchParams.get("state"));
-
+  const [state, setState] = useState<string>();
   const [shareModalState, setShareModalState] =
     useState<ShareModalState>("CLOSED");
 
@@ -176,12 +171,12 @@ export default function Configuration() {
     setState(newStateString);
   }, [serverConfig, clientConfig, scopes, extras, options]);
 
-  const copyShareLink = () => {
+  const copyShareLink = async () => {
     if (state) {
       const url = new URL(window.location.toString());
       url.searchParams.set("state", state);
 
-      navigator.clipboard
+      return navigator.clipboard
         .writeText(url.toString())
         .then(() => setShareModalState("SUCCESS"))
         .catch(() => setShareModalState("FAILED"));
@@ -190,75 +185,11 @@ export default function Configuration() {
     }
   };
 
-  const shareModalContents = () => {
-    if (shareModalState === "SUCCESS") {
-      return (
-        <article>
-          <header>
-            <a
-              aria-label="Close"
-              className="close"
-              onClick={() => setShareModalState("CLOSED")}
-            />
-            Success
-          </header>
-          <p>The share URL has been copied to the clipboard.</p>
-        </article>
-      );
-    }
-
-    if (shareModalState === "FAILED") {
-      return (
-        <article>
-          <header>
-            <a
-              aria-label="Close"
-              className="close"
-              onClick={() => setShareModalState("CLOSED")}
-            />
-            Failure
-          </header>
-          <p>The share URL could not be copied to the clipboard.</p>
-          <p>This could be due to a permissions issue.</p>
-        </article>
-      );
-    }
-
-    return (
-      <article>
-        <header>
-          <a
-            aria-label="Close"
-            className="close"
-            onClick={() => setShareModalState("CLOSED")}
-          />
-          Warning
-        </header>
-        <p>This URL contains your client secret.</p>
-        <p>
-          Keep it safe and <b>do not share with unauthorized parties</b>.
-        </p>
-        <footer>
-          <button
-            role="button"
-            className="inline secondary"
-            onClick={() => setShareModalState("CLOSED")}
-          >
-            Cancel
-          </button>
-          <button className="inline" role="button" onClick={copyShareLink}>
-            Proceed
-          </button>
-        </footer>
-      </article>
-    );
-  };
-
-  const handleShareClick = () => {
+  const handleShareClick = async () => {
     if (clientConfig.clientSecret) {
       setShareModalState("OPEN");
     } else {
-      copyShareLink();
+      await copyShareLink();
     }
   };
 
@@ -273,9 +204,11 @@ export default function Configuration() {
         <FontAwesomeIcon icon={faCopy} />
       </button>
 
-      <dialog open={shareModalState !== "CLOSED"}>
-        {shareModalContents()}
-      </dialog>
+      <ShareModal
+        shareModalState={shareModalState}
+        shareModalStateChanged={setShareModalState}
+        copyShareLink={copyShareLink}
+      />
 
       <h3>Configuration</h3>
       <Form method="post">
