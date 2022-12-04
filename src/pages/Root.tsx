@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMoon } from "@fortawesome/free-solid-svg-icons";
+import { faFloppyDisk, faMoon } from "@fortawesome/free-solid-svg-icons";
 import "./Root.css";
 import { useState } from "react";
 import Breadcrumbs from "../components/Breadcrumbs";
@@ -52,6 +52,16 @@ export default function Root({ children }: RootProps) {
                   onChange={(event) => setDarkMode(event.target.checked)}
                 />
                 <FontAwesomeIcon icon={faMoon} size="lg" />
+              </label>
+            </li>
+            <li>
+              <label htmlFor="stateful-mode-toggle">
+                <input
+                  type="checkbox"
+                  id="stateful-mode-toggle"
+                  role="switch"
+                />
+                <FontAwesomeIcon icon={faFloppyDisk} size="lg" />
               </label>
             </li>
           </ul>
