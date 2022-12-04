@@ -1,24 +1,24 @@
-[x] Migrate out of mini.css (abandoned project)
+[ ] Support stateful mode
+[ ] Darkmode cookie (?)
+[ ] Form validation
 [ ] Implement CORS proxy and integrate with it
-[x] Use react-router-dom properly (data features)
+[ ] Set Accept header on token request
+[ ] Allow passing auth params through POST body (token request)
 [ ] Use react-router-dom properly (suspend state)
-[x] Accept extra parameters in the Authz request
-[ ] Implement CSS transitions
-[ ] Implement accessibility
-[x] Avoid flashing states during updates
-[ ] Option to renew token
 [ ] Add tooltips
 [ ] Add toasters
 [ ] Write About page
-[ ] Darkmode cookie (?)
-[x] Add breadcrumb
-[x] Refactor Configuration component
-[ ] Allow passing auth params through POST body (token request)
-[ ] Set Accept header on token request
 [ ] Make it clear only explicit mode is implemented
+[ ] Implement CSS transitions
+[ ] Implement accessibility
 [ ] Instructions/guide for configuring
+[ ] Option to renew token
 [x] Error page
 [x] Move client config to post authz (avoids browser caching secret in URL history)
-[ ] Form validation
 [x] Idea: instead of sharing URL, share state directly (PB does this)
-[ ] Support stateful mode
+[x] Add breadcrumb
+[x] Refactor Configuration component
+[x] Avoid flashing states during updates
+[x] Accept extra parameters in the Authz request
+[x] Use react-router-dom properly (data features)
+[x] Migrate out of mini.css (abandoned project)
