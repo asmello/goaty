@@ -18,6 +18,7 @@
 [ ] Make it clear only explicit mode is implemented
 [ ] Instructions/guide for configuring
 [x] Error page
-[ ] Move client config to post authz (avoids browser caching secret in URL history)
+[x] Move client config to post authz (avoids browser caching secret in URL history)
 [ ] Form validation
 [x] Idea: instead of sharing URL, share state directly (PB does this)
+[ ] Support stateful mode
