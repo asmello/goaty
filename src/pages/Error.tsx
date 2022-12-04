@@ -58,7 +58,7 @@ export interface RemoteErrorPayload {
 }
 
 export function isRemoteErrorPayload(data: any): data is RemoteErrorPayload {
-  return "error" in data;
+  return (data as RemoteErrorPayload).error !== undefined;
 }
 
 function defaultMessage(status: number) {

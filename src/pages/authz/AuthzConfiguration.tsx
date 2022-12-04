@@ -29,7 +29,7 @@ export default function AuthzConfiguration() {
 
   return (
     <article>
-      <h3>Authorization Request Configuration</h3>
+      <h3>Authorization Request</h3>
       <Form method="post">
         <div className="grid">
           <label>

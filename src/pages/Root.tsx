@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon } from "@fortawesome/free-solid-svg-icons";
 import "./Root.css";
 import { useState } from "react";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 interface RootProps {
   children?: JSX.Element;
@@ -39,6 +40,7 @@ export default function Root({ children }: RootProps) {
               </NavLink>
             </li>
           </ul>
+          <Breadcrumbs />
           <ul>
             <li>
               <label htmlFor="dark-mode-toggle">

@@ -25,7 +25,7 @@ export default function Callback() {
 
   return (
     <article>
-      <h3>Token Request Configuration</h3>
+      <h3>Token Request</h3>
       <Form method="post" action="/token">
         <div className="grid">
           <label>
