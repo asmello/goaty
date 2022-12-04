@@ -27,14 +27,18 @@ function createEmptyConfig(): ConfigurationData {
 export async function configurationLoader({
   request,
 }: LoaderFunctionArgs): Promise<ConfigurationData> {
-  const data = await request.formData();
-  const state = data.get("state");
-  if (!state) {
+  if (request.method === "POST") {
+    const data = await request.formData();
+    const stateString = data.get("state")?.toString();
+    if (!stateString) {
+      return createEmptyConfig();
+    }
+    const decodedState = decode(stateString);
+    if (!decodedState) {
+      return createEmptyConfig();
+    }
+    return convertStateToConfiguration(decodedState);
+  } else {
     return createEmptyConfig();
   }
-  const decoded = decode(state.toString());
-  if (!decoded) {
-    return createEmptyConfig();
-  }
-  return convertStateToConfiguration(decoded);
 }
