@@ -2,34 +2,31 @@ import InputList from "../../components/InputList";
 import { Item } from "../../components/InputListItem";
 import { v4 as uuid } from "uuid";
 
-interface ScopesFieldsProps {
-  scopes: Item[];
-  onScopesChange: (newScopes: Item[]) => void;
+interface ScopesProps {
+  items: Item[];
+  onChanged: (newItems: Item[]) => void;
 }
 
-export default function ScopesFields({
-  scopes,
-  onScopesChange,
-}: ScopesFieldsProps) {
+export default function Scopes({ items, onChanged }: ScopesProps) {
   const handleItemDelete = (id: string) => {
-    onScopesChange(scopes.filter((scope) => scope.id !== id));
+    onChanged(items.filter((scope) => scope.id !== id));
   };
   const handleItemChange = (id: string, newValue: string) => {
-    onScopesChange(
-      scopes.map((scope) =>
+    onChanged(
+      items.map((scope) =>
         scope.id === id ? { id: id, value: newValue } : scope
       )
     );
   };
   const handleItemCreate = () => {
-    onScopesChange(scopes.concat([{ id: uuid(), value: "" }]));
+    onChanged(items.concat([{ id: uuid(), value: "" }]));
   };
 
   return (
     <fieldset className="visible">
       <legend>Scopes</legend>
       <InputList
-        items={scopes}
+        items={items}
         onCreate={handleItemCreate}
         onChange={handleItemChange}
         onDelete={handleItemDelete}
@@ -37,7 +34,7 @@ export default function ScopesFields({
       <input
         name="scopes"
         type="hidden"
-        value={scopes.map(({ value }) => value).join(" ")}
+        value={items.map(({ value }) => value).join(" ")}
       />
     </fieldset>
   );

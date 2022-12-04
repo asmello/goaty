@@ -1,4 +1,0 @@
-#submitButton {
-  max-width: calc(100% - 2 * var(--spacing));
-  margin: var(--spacing) auto;
-}

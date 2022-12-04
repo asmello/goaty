@@ -9,7 +9,7 @@ export default function Home() {
           <h1>🐐 GOATY</h1>
           <h2>The Generic OAuth2 Token Yanker</h2>
         </hgroup>
-        <Link to="configure" role="button" className="primary">
+        <Link to="authz" role="button" className="primary">
           Get started
         </Link>
       </article>

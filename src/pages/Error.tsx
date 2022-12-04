@@ -1,14 +1,48 @@
 import {
   useRouteError,
   isRouteErrorResponse,
-  Link,
   useNavigate,
 } from "react-router-dom";
 
-export interface ErrorData {
-  header: string;
-  body: string;
+interface MissingParameterError {
+  kind: "MissingParameter";
+  parameter: string;
 }
+
+interface InvalidParameterError {
+  kind: "InvalidParameter";
+  parameter: string;
+}
+
+interface InvalidHttpMethodError {
+  kind: "InvalidHttpMethod";
+  message: string;
+}
+
+interface RemoteError {
+  kind: "RemoteError";
+  name: string;
+  description?: string;
+  link?: string;
+}
+
+interface GenericRemoteError {
+  kind: "GenericRemoteError";
+  message: string;
+  response?: string;
+}
+
+interface UnknownError {
+  kind: "UnknownError";
+}
+
+export type ErrorData =
+  | MissingParameterError
+  | InvalidParameterError
+  | InvalidHttpMethodError
+  | RemoteError
+  | GenericRemoteError
+  | UnknownError;
 
 // react-router-dom doesn't publish this for whatever dumb reason
 interface ErrorResponse {
@@ -17,24 +51,71 @@ interface ErrorResponse {
   data: ErrorData;
 }
 
+export interface RemoteErrorPayload {
+  error: string;
+  error_description?: string;
+  error_uri?: string;
+}
+
+export function isRemoteErrorPayload(data: any): data is RemoteErrorPayload {
+  return "error" in data;
+}
+
 function defaultMessage(status: number) {
   switch (status) {
     case 404:
       return <p>Not all who wander are lost. But you certainly are.</p>;
-    default:
-      return <p>Houston, we've got a problem.</p>;
   }
 }
 
+function renderMissingParameterError(error: MissingParameterError) {
+  return {
+    header: <h2>Missing Parameter</h2>,
+    body: (
+      <p>
+        Parameter <code>{error.parameter}</code> is missing.
+      </p>
+    ),
+  };
+}
+
+function renderRemoteError(status: number, error: RemoteError) {
+  return {
+    header: (
+      <h2>
+        <mark className="error">{status}</mark> {error.name}
+      </h2>
+    ),
+    body: <p>{error.description || "Remote Error"}</p>,
+  };
+}
+
+function renderGenericRemoteError(error: GenericRemoteError) {
+  return {
+    header: <h2>{error.message}</h2>,
+    body: <p>{error.response || "Remote Error"}</p>,
+  };
+}
+
 function renderErrorResponse(error: ErrorResponse) {
-  const header = (
-    <h2>
-      <mark className="error">{error.status}</mark>{" "}
-      {error.data.header || error.statusText}
-    </h2>
-  );
-  const body = error.data.body || defaultMessage(error.status);
-  return { header: header, body: body };
+  switch (error.data.kind) {
+    case "MissingParameter":
+      return renderMissingParameterError(error.data);
+    case "RemoteError":
+      return renderRemoteError(error.status, error.data);
+    case "GenericRemoteError":
+      return renderGenericRemoteError(error.data);
+    default:
+      const header = (
+        <h2>
+          Error <mark className="error">{error.status}</mark>
+        </h2>
+      );
+      const body = defaultMessage(error.status) || (
+        <p>Context: {error.statusText || error.data.kind}</p>
+      );
+      return { header: header, body: body };
+  }
 }
 
 function renderError(error: Error) {

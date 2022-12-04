@@ -5,11 +5,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import Root from "./pages/Root";
 import About from "./pages/About";
-import Callback, { loader as callbackLoader } from "./pages/Callback";
-import Configuration from "./pages/configure/Configuration";
-import { configurationAction } from "./pages/configure/configurationAction";
-import { configurationLoader } from "./pages/configure/configurationLoader";
+import Callback from "./pages/callback/Callback";
+import callbackLoader from "./pages/callback/loader";
+import authzAction from "./pages/authz/action";
 import Error from "./pages/Error";
+import AuthzConfiguration from "./pages/authz/AuthzConfiguration";
+import Token from "./pages/token/Token";
+import tokenAction from "./pages/token/action";
 
 const router = createBrowserRouter([
   {
@@ -26,17 +28,19 @@ const router = createBrowserRouter([
         index: true,
       },
       {
-        element: <Configuration />,
-        path: "configure",
-        loader: configurationLoader,
-        action: configurationAction,
-        shouldRevalidate: ({ currentUrl, nextUrl }) =>
-          currentUrl.href !== nextUrl.href,
+        element: <AuthzConfiguration />,
+        path: "authz",
+        action: authzAction,
       },
       {
         element: <Callback />,
         path: "callback",
         loader: callbackLoader,
+      },
+      {
+        element: <Token />,
+        path: "token",
+        action: tokenAction, // this is a bit of a hack, but loader can't do POST
       },
       {
         element: <About />,

@@ -1,22 +1,6 @@
 export default interface State {
-  z: string;
-  t: string;
-  i: string;
-  s: string;
-  r?: boolean;
-  p?: string;
-  x?: Record<string, string>;
-  c?: string;
-}
-
-export function isValidState(maybeState: object): maybeState is State {
-  const keys = Object.keys(maybeState);
-  const requiredKeys = ["z", "t", "i", "s"];
-  if (!requiredKeys.every((requiredKey) => keys.includes(requiredKey))) {
-    return false;
-  }
-  const allKeys = [...requiredKeys, "r", "p", "x", "c"];
-  return keys.every((key) => allKeys.includes(key));
+  i: string; // client_id
+  r?: string; // redirect_uri
 }
 
 export function decode(stateString: string): State | undefined {
