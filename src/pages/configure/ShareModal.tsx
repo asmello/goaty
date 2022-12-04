@@ -1,4 +1,4 @@
-import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { faCopy, faPaste } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { decode, encode, isValidState } from "../../common/State";
@@ -40,10 +40,16 @@ export default function ShareModal({
   }, [modalState]);
 
   const copyShareLink = async () => {
-    return navigator.clipboard
+    navigator.clipboard
       .writeText(state)
       .then(() => onModalStateChanged("SUCCESS"))
       .catch(() => onModalStateChanged("FAILED"));
+  };
+
+  const pasteShareLink = async () => {
+    navigator.clipboard
+      .readText()
+      .then((newState) => handleStateChange(newState));
   };
 
   const handleStateChange = (newState: string) => {
@@ -81,6 +87,13 @@ export default function ShareModal({
             onClick={copyShareLink}
           >
             <FontAwesomeIcon icon={faCopy} />
+          </button>
+          <button
+            role="button"
+            className="inline secondary"
+            onClick={pasteShareLink}
+          >
+            <FontAwesomeIcon icon={faPaste} />
           </button>
         </p>
       </article>

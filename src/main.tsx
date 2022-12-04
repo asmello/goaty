@@ -30,6 +30,8 @@ const router = createBrowserRouter([
         path: "configure",
         loader: configurationLoader,
         action: configurationAction,
+        shouldRevalidate: ({ currentUrl, nextUrl }) =>
+          currentUrl.href !== nextUrl.href,
       },
       {
         element: <Callback />,
