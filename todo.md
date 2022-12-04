@@ -11,7 +11,7 @@
 [ ] Add toasters
 [ ] Write About page
 [ ] Darkmode cookie (?)
-[ ] Add breadcrumb
+[x] Add breadcrumb
 [x] Refactor Configuration component
 [ ] Allow passing auth params through POST body (token request)
 [ ] Set Accept header on token request
