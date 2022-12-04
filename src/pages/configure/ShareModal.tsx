@@ -1,7 +1,7 @@
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import State, { decode, encode, isValidState } from "../../common/State";
+import { decode, encode, isValidState } from "../../common/State";
 import {
   ConfigurationData,
   convertConfigurationToState,
