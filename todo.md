@@ -12,12 +12,12 @@
 [ ] Write About page
 [ ] Darkmode cookie (?)
 [ ] Add breadcrumb
-[ ] Refactor Configuration component
+[x] Refactor Configuration component
 [ ] Allow passing auth params through POST body (token request)
 [ ] Set Accept header on token request
 [ ] Make it clear only explicit mode is implemented
 [ ] Instructions/guide for configuring
 [x] Error page
-[ ] Option to set some config after authz (user choice)
+[ ] Move client config to post authz (avoids browser caching secret in URL history)
 [ ] Form validation
-[ ] Idea: instead of sharing URL, share state directly (PB does this)
+[x] Idea: instead of sharing URL, share state directly (PB does this)
