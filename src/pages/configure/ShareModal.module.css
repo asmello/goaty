@@ -1,0 +1,7 @@
+#stateField {
+  display: flex;
+}
+
+#stateField > button {
+  margin-left: var(--spacing);
+}

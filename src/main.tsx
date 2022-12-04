@@ -6,10 +6,9 @@ import Home from "./pages/Home";
 import Root from "./pages/Root";
 import About from "./pages/About";
 import Callback, { loader as callbackLoader } from "./pages/Callback";
-import Configuration, {
-  loader as configurationLoader,
-  action as configurationAction,
-} from "./pages/configure/Configuration";
+import Configuration from "./pages/configure/Configuration";
+import { configurationAction } from "./pages/configure/configurationAction";
+import { configurationLoader } from "./pages/configure/configurationLoader";
 import Error from "./pages/Error";
 
 const router = createBrowserRouter([

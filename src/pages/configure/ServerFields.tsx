@@ -3,16 +3,11 @@ import { ChangeEvent } from "react";
 interface ServerFieldsProps {
   authzEndpoint: string;
   tokenEndpoint: string;
-  onAuthzUrlChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onTokenUrlChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onAuthzEndpointChange: (newAuthzEndpoint: string) => void;
+  onTokenEndpointChange: (newTokenEndpoint: string) => void;
 }
 
-export default function ServerFields({
-  authzEndpoint,
-  tokenEndpoint,
-  onAuthzUrlChange,
-  onTokenUrlChange,
-}: ServerFieldsProps) {
+export default function ServerFields(props: ServerFieldsProps) {
   return (
     <fieldset className="visible centered-text">
       <legend>Server</legend>
@@ -22,8 +17,8 @@ export default function ServerFields({
         <input
           name="authzEndpoint"
           type="url"
-          value={authzEndpoint}
-          onChange={onAuthzUrlChange}
+          value={props.authzEndpoint}
+          onChange={(event) => props.onAuthzEndpointChange(event.target.value)}
           placeholder="https://example.com/authorize"
         />
       </label>
@@ -33,8 +28,8 @@ export default function ServerFields({
         <input
           name="tokenEndpoint"
           type="url"
-          value={tokenEndpoint}
-          onChange={onTokenUrlChange}
+          value={props.tokenEndpoint}
+          onChange={(event) => props.onTokenEndpointChange(event.target.value)}
           placeholder="https://example.com/token"
         />
       </label>

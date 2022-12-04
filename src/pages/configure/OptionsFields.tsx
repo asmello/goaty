@@ -1,21 +1,21 @@
 import style from "./OptionsFields.module.css";
 
-interface OptionsFieldsProps {
+export interface Options {
   proxyEnabled: boolean;
-  proxyUrl: string;
+  proxyUrl?: string;
   sendUri: boolean;
-  onProxyEnabledChange: (newValue: boolean) => void;
-  onProxyUrlChange: (newValue: string) => void;
-  onSendUriChange: (newValue: boolean) => void;
 }
 
+interface OptionsFieldsProps {
+  options: Options;
+  onOptionsChanged: (newOptions: Options) => void;
+}
+
+const DEFAULT_PROXY_URL = "https://goaty.themelon.net/proxy";
+
 export default function OptionsFields({
-  proxyEnabled,
-  proxyUrl,
-  sendUri,
-  onProxyEnabledChange,
-  onProxyUrlChange,
-  onSendUriChange,
+  options,
+  onOptionsChanged,
 }: OptionsFieldsProps) {
   return (
     <fieldset className="tight">
@@ -25,8 +25,10 @@ export default function OptionsFields({
         <input
           name="sendUri"
           type="checkbox"
-          checked={sendUri}
-          onChange={(event) => onSendUriChange(event.target.checked)}
+          checked={options.sendUri}
+          onChange={(event) =>
+            onOptionsChanged({ ...options, sendUri: event.target.checked })
+          }
         />
         Send <code>redirect_uri</code>
       </label>
@@ -34,12 +36,18 @@ export default function OptionsFields({
       <label className={style.final}>
         <input
           type="checkbox"
-          checked={proxyEnabled}
-          onChange={(event) => onProxyEnabledChange(event.target.checked)}
+          checked={options.proxyEnabled}
+          onChange={(event) =>
+            onOptionsChanged({
+              ...options,
+              proxyEnabled: event.target.checked,
+              proxyUrl: options.proxyUrl ?? DEFAULT_PROXY_URL,
+            })
+          }
         />
         Use proxy
       </label>
-      {proxyEnabled && (
+      {options.proxyEnabled && (
         <>
           <label htmlFor="proxy_url" hidden>
             Proxy URL
@@ -47,8 +55,10 @@ export default function OptionsFields({
           <input
             id="proxy_url"
             type="url"
-            value={proxyUrl}
-            onChange={(event) => onProxyUrlChange(event.target.value)}
+            value={options.proxyUrl}
+            onChange={(event) =>
+              onOptionsChanged({ ...options, proxyUrl: event.target.value })
+            }
           />
         </>
       )}

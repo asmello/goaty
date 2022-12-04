@@ -1,77 +1,88 @@
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import State, { decode, encode, isValidState } from "../../common/State";
+import {
+  ConfigurationData,
+  convertConfigurationToState,
+  convertStateToConfiguration,
+} from "./Configuration";
+import style from "./ShareModal.module.css";
+
 export type ShareModalState = "CLOSED" | "OPEN" | "SUCCESS" | "FAILED";
 
 interface ShareModalProps {
-  shareModalState: ShareModalState;
-  shareModalStateChanged: (newState: ShareModalState) => void;
-  copyShareLink: () => void;
+  configuration: ConfigurationData;
+  onConfigurationChanged: (newConfiguration: ConfigurationData) => void;
+  modalState: ShareModalState;
+  onModalStateChanged: (newState: ShareModalState) => void;
 }
 
 export default function ShareModal({
-  shareModalState,
-  shareModalStateChanged,
-  copyShareLink,
+  configuration,
+  onConfigurationChanged,
+  modalState,
+  onModalStateChanged,
 }: ShareModalProps) {
-  const shareModalContents = () => {
-    switch (shareModalState) {
-      case "SUCCESS":
-        return {
-          title: "Success",
-          body: <p>The share URL has been copied to the clipboard.</p>,
-        };
-      case "FAILED":
-        return {
-          title: "Failure",
-          body: (
-            <>
-              <p>The share URL could not be copied to the clipboard.</p>
-              <p>This could be due to a permissions issue.</p>
-            </>
-          ),
-        };
-      default:
-        return {
-          title: "Warning",
-          body: (
-            <>
-              <p>This URL contains your client secret.</p>
-              <p>
-                Keep it safe and <b>do not share with unauthorized parties</b>.
-              </p>
-            </>
-          ),
-          footer: (
-            <>
-              <button
-                role="button"
-                className="inline secondary"
-                onClick={() => shareModalStateChanged("CLOSED")}
-              >
-                Cancel
-              </button>
-              <button className="inline" role="button" onClick={copyShareLink}>
-                Proceed
-              </button>
-            </>
-          ),
-        };
+  const getDerivedState = () =>
+    encode(convertConfigurationToState(configuration));
+
+  const [state, setState] = useState(getDerivedState);
+
+  useEffect(() => {
+    if (modalState === "OPEN") {
+      // On open, we reset the state string if it is not valid
+      const derivedState = getDerivedState();
+      if (state !== derivedState) {
+        setState(derivedState);
+      }
+    }
+  }, [modalState]);
+
+  const copyShareLink = async () => {
+    return navigator.clipboard
+      .writeText(state)
+      .then(() => onModalStateChanged("SUCCESS"))
+      .catch(() => onModalStateChanged("FAILED"));
+  };
+
+  const handleStateChange = (newState: string) => {
+    setState(newState);
+    const decoded = decode(newState);
+    if (decoded && isValidState(decoded)) {
+      onConfigurationChanged(convertStateToConfiguration(decoded));
     }
   };
 
-  const { title, body, footer } = shareModalContents();
-
   return (
-    <dialog open={shareModalState !== "CLOSED"}>
+    <dialog open={modalState !== "CLOSED"}>
       <article>
         <header>
           <a
             aria-label="Close"
             className="close"
-            onClick={() => shareModalStateChanged("CLOSED")}
+            onClick={() => onModalStateChanged("CLOSED")}
           />
-          {title}
+          Configuration Sharing
         </header>
-        {body}
-        {footer && <footer>{footer}</footer>}
+        <p>The value below may contain your client secret.</p>
+        <p>
+          Keep it safe and <b>do not share with unauthorized parties</b>.
+        </p>
+        <p id={style.stateField}>
+          <input
+            type="text"
+            value={state}
+            onChange={(event) => handleStateChange(event.target.value)}
+          />
+          <button
+            role="button"
+            className="inline secondary"
+            onClick={copyShareLink}
+          >
+            <FontAwesomeIcon icon={faCopy} />
+          </button>
+        </p>
       </article>
     </dialog>
   );
