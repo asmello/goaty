@@ -35,6 +35,7 @@ export default function AuthzConfiguration() {
           <label>
             Authorization URL
             <input
+              required
               name="authzEndpoint"
               type="url"
               value={config.authzEndpoint}
@@ -50,6 +51,7 @@ export default function AuthzConfiguration() {
           <label>
             Client Identifier
             <input
+              required
               name="clientId"
               type="text"
               value={config.clientId}

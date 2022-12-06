@@ -31,6 +31,7 @@ export default function Callback() {
           <label>
             Token URL
             <input
+              required
               name="tokenUrl"
               type="url"
               value={config.tokenEndpoint}
@@ -46,6 +47,7 @@ export default function Callback() {
           <label>
             Client Secret
             <input
+              required
               name="clientSecret"
               type="password"
               value={config.clientSecret}
