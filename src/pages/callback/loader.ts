@@ -8,6 +8,29 @@ export interface CallbackParams {
   redirectUri?: string;
 }
 
+export interface TokenRequestConfiguration {
+  tokenEndpoint: string;
+  clientSecret: string;
+  useProxy: boolean;
+  proxyUrl?: string;
+}
+
+export interface CallbackData {
+  params: CallbackParams;
+  config: TokenRequestConfiguration;
+}
+
+export const STORE_KEY = "callbackState";
+
+function emptyTokenRequestConfiguration(): TokenRequestConfiguration {
+  return {
+    tokenEndpoint: "",
+    clientSecret: "",
+    useProxy: false,
+    proxyUrl: "https://goaty.themelon.net/proxy",
+  };
+}
+
 export default async function ({
   request,
 }: LoaderFunctionArgs): Promise<Response> {
@@ -49,9 +72,19 @@ export default async function ({
     );
   }
 
-  return json<CallbackParams>({
-    code: code,
-    clientId: decodedState.i,
-    redirectUri: decodedState.r,
+  const configString =
+    window.localStorage.getItem(STORE_KEY) ||
+    window.sessionStorage.getItem(STORE_KEY);
+  const config: TokenRequestConfiguration = configString
+    ? JSON.parse(configString)
+    : emptyTokenRequestConfiguration();
+
+  return json<CallbackData>({
+    params: {
+      code,
+      clientId: decodedState.i,
+      redirectUri: decodedState.r,
+    },
+    config,
   });
 }
