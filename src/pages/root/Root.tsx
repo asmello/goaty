@@ -1,15 +1,45 @@
-import { NavLink, Outlet } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFloppyDisk, faMoon } from "@fortawesome/free-solid-svg-icons";
-import "./Root.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import Breadcrumbs from "../components/Breadcrumbs";
+import { NavLink, Outlet, useLoaderData } from "react-router-dom";
+import { trySetPersistentItem } from "../../common/helpers";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import { RootState, STORE_KEY } from "./loader";
+import "./Root.css";
 
 interface RootProps {
   children?: JSX.Element;
 }
 
 export default function Root({ children }: RootProps) {
+  const loadedState = useLoaderData() as RootState;
+  const [context, setContext] = useState(loadedState);
+
+  const handlePersistChange = (persist: boolean) => {
+    const newState = { persistEnabled: persist };
+    if (persist) {
+      // Move all key/value pairs to localStorage
+      window.localStorage.clear();
+      for (let i = 0; i < window.sessionStorage.length; ++i) {
+        const keyName = window.sessionStorage.key(i) as string;
+        const value = window.sessionStorage.getItem(keyName) as string;
+        window.localStorage.setItem(keyName, value);
+      }
+      window.sessionStorage.clear();
+      trySetPersistentItem(STORE_KEY, newState);
+    } else {
+      // Move all key/value pairs to sessionStorage
+      window.sessionStorage.clear();
+      for (let i = 0; i < window.localStorage.length; ++i) {
+        const keyName = window.localStorage.key(i) as string;
+        const value = window.localStorage.getItem(keyName) as string;
+        window.sessionStorage.setItem(keyName, value);
+      }
+      window.localStorage.clear();
+    }
+    setContext(newState);
+  };
+
   const [darkModeEnabled, setDarkModeEnabled] = useState(
     () => window.matchMedia("(prefers-color-scheme: dark)").matches
   );
@@ -60,6 +90,10 @@ export default function Root({ children }: RootProps) {
                   type="checkbox"
                   id="stateful-mode-toggle"
                   role="switch"
+                  checked={context.persistEnabled}
+                  onChange={(event) =>
+                    handlePersistChange(event.target.checked)
+                  }
                 />
                 <FontAwesomeIcon icon={faFloppyDisk} size="lg" />
               </label>
@@ -67,7 +101,7 @@ export default function Root({ children }: RootProps) {
           </ul>
         </nav>
       </header>
-      <main>{children || <Outlet />}</main>
+      <main>{children || <Outlet context={context} />}</main>
       <footer>
         Find me at <a href="https://github.com/asmello/goaty">Github</a>.
       </footer>

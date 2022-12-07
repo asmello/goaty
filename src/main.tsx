@@ -1,29 +1,32 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./main.scss";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./pages/Home";
-import Root from "./pages/Root";
-import About from "./pages/About";
-import Callback from "./pages/callback/Callback";
-import callbackLoader from "./pages/callback/loader";
-import authzAction from "./pages/authz/action";
-import Error from "./pages/Error";
-import AuthzConfiguration from "./pages/authz/AuthzConfiguration";
-import Token from "./pages/token/Token";
-import tokenAction from "./pages/token/action";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowsRotate,
   faCircleCheck,
   faThumbsUp,
   faUserCheck,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./main.scss";
+import About from "./pages/About";
+import authzAction from "./pages/authz/action";
+import AuthzConfiguration from "./pages/authz/AuthzConfiguration";
+import authzLoader from "./pages/authz/loader";
+import Callback from "./pages/callback/Callback";
+import callbackLoader from "./pages/callback/loader";
+import Error from "./pages/Error";
+import Home from "./pages/Home";
+import rootLoader from "./pages/root/loader";
+import Root from "./pages/root/Root";
+import tokenAction from "./pages/token/action";
+import Token from "./pages/token/Token";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    loader: rootLoader,
     errorElement: (
       <Root>
         <Error />
@@ -38,6 +41,7 @@ const router = createBrowserRouter([
         element: <AuthzConfiguration />,
         path: "authz",
         action: authzAction,
+        loader: authzLoader,
         handle: {
           crumbs: [<FontAwesomeIcon icon={faUserCheck} />],
         },

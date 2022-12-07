@@ -1,27 +1,33 @@
-import { Form, useLoaderData } from "react-router-dom";
-import { CallbackParams } from "./loader";
-import style from "./Callback.module.css";
 import { useState } from "react";
-
-interface TokenRequestConfiguration {
-  tokenEndpoint: string;
-  clientSecret: string;
-  useProxy: boolean;
-  proxyUrl?: string;
-}
-
-function emptyTokenRequestConfiguration(): TokenRequestConfiguration {
-  return {
-    tokenEndpoint: "",
-    clientSecret: "",
-    useProxy: false,
-    proxyUrl: "https://goaty.themelon.net/proxy",
-  };
-}
+import { Form, useLoaderData, useOutletContext } from "react-router-dom";
+import {
+  trySetEphemeralItem,
+  trySetPersistentItem,
+} from "../../common/helpers";
+import { RootState } from "../root/loader";
+import style from "./Callback.module.css";
+import { CallbackData, STORE_KEY, TokenRequestConfiguration } from "./loader";
 
 export default function Callback() {
-  const data = useLoaderData() as CallbackParams;
-  const [config, setConfig] = useState(emptyTokenRequestConfiguration);
+  const context = useOutletContext() as RootState;
+  const data = useLoaderData() as CallbackData;
+
+  const [config, setConfig] = useState(data.config);
+  const handleConfigChange = (
+    field: keyof TokenRequestConfiguration,
+    newValue: TokenRequestConfiguration[keyof TokenRequestConfiguration]
+  ) => {
+    const newConfig = {
+      ...config,
+      [field]: newValue,
+    };
+    if (context.persistEnabled) {
+      trySetPersistentItem(STORE_KEY, newConfig);
+    } else {
+      trySetEphemeralItem(STORE_KEY, newConfig);
+    }
+    setConfig(newConfig);
+  };
 
   return (
     <article>
@@ -36,10 +42,7 @@ export default function Callback() {
               type="url"
               value={config.tokenEndpoint}
               onChange={(event) =>
-                setConfig({
-                  ...config,
-                  tokenEndpoint: event.target.value,
-                })
+                handleConfigChange("tokenEndpoint", event.target.value)
               }
               placeholder="https://example.com/token"
             />
@@ -52,10 +55,7 @@ export default function Callback() {
               type="password"
               value={config.clientSecret}
               onChange={(event) =>
-                setConfig({
-                  ...config,
-                  clientSecret: event.target.value,
-                })
+                handleConfigChange("clientSecret", event.target.value)
               }
             />
           </label>
@@ -69,10 +69,7 @@ export default function Callback() {
                 type="checkbox"
                 checked={config.useProxy}
                 onChange={(event) =>
-                  setConfig({
-                    ...config,
-                    useProxy: event.target.checked,
-                  })
+                  handleConfigChange("useProxy", event.target.checked)
                 }
               />
               Use proxy
@@ -87,10 +84,7 @@ export default function Callback() {
                   type="url"
                   value={config.proxyUrl}
                   onChange={(event) =>
-                    setConfig({
-                      ...config,
-                      proxyUrl: event.target.value,
-                    })
+                    handleConfigChange("proxyUrl", event.target.value)
                   }
                 />
               </>
@@ -98,10 +92,14 @@ export default function Callback() {
           </fieldset>
           <input type="submit" className="primary standalone" value="Go" />
         </div>
-        <input name="code" type="hidden" value={data.code} />
-        <input name="clientId" type="hidden" value={data.clientId} />
-        {data.redirectUri && (
-          <input name="redirectUri" type="hidden" value={data.redirectUri} />
+        <input name="code" type="hidden" value={data.params.code} />
+        <input name="clientId" type="hidden" value={data.params.clientId} />
+        {data.params.redirectUri && (
+          <input
+            name="redirectUri"
+            type="hidden"
+            value={data.params.redirectUri}
+          />
         )}
       </Form>
     </article>

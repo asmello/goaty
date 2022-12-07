@@ -1,8 +1,14 @@
 import { useState } from "react";
-import { Form } from "react-router-dom";
+import { Form, useLoaderData, useOutletContext } from "react-router-dom";
+import {
+  trySetEphemeralItem,
+  trySetPersistentItem,
+} from "../../common/helpers";
 import { Item } from "../../components/InputListItem";
 import { MapItem } from "../../components/InputMapItem";
+import { RootState } from "../root/loader";
 import Extras from "./Extras";
+import { STORE_KEY } from "./loader";
 import Scopes from "./Scopes";
 
 export interface AuthzConfigurationData {
@@ -13,19 +19,26 @@ export interface AuthzConfigurationData {
   sendRedirectUri: boolean;
 }
 
-function emptyConfiguration(): AuthzConfigurationData {
-  return {
-    authzEndpoint: "",
-    clientId: "",
-    scopes: [],
-    extras: [],
-    sendRedirectUri: false,
-  };
-}
-
 export default function AuthzConfiguration() {
-  const [config, setConfig] =
-    useState<AuthzConfigurationData>(emptyConfiguration);
+  const context = useOutletContext() as RootState;
+  const initialConfig = useLoaderData() as AuthzConfigurationData;
+
+  const [config, setConfig] = useState<AuthzConfigurationData>(initialConfig);
+  const handleConfigChange = (
+    field: keyof AuthzConfigurationData,
+    newValue: AuthzConfigurationData[keyof AuthzConfigurationData]
+  ) => {
+    const newConfig = {
+      ...config,
+      [field]: newValue,
+    };
+    if (context.persistEnabled) {
+      trySetPersistentItem(STORE_KEY, newConfig);
+    } else {
+      trySetEphemeralItem(STORE_KEY, newConfig);
+    }
+    setConfig(newConfig);
+  };
 
   return (
     <article>
@@ -40,10 +53,7 @@ export default function AuthzConfiguration() {
               type="url"
               value={config.authzEndpoint}
               onChange={(event) =>
-                setConfig({
-                  ...config,
-                  authzEndpoint: event.target.value,
-                })
+                handleConfigChange("authzEndpoint", event.target.value)
               }
               placeholder="https://example.com/authorize"
             />
@@ -56,10 +66,7 @@ export default function AuthzConfiguration() {
               type="text"
               value={config.clientId}
               onChange={(event) =>
-                setConfig({
-                  ...config,
-                  clientId: event.target.value,
-                })
+                handleConfigChange("clientId", event.target.value)
               }
             />
           </label>
@@ -67,15 +74,11 @@ export default function AuthzConfiguration() {
         <div className="grid">
           <Scopes
             items={config.scopes}
-            onChanged={(newScopes) =>
-              setConfig({ ...config, scopes: newScopes })
-            }
+            onChanged={(newScopes) => handleConfigChange("scopes", newScopes)}
           />
           <Extras
             items={config.extras}
-            onChanged={(newExtras) =>
-              setConfig({ ...config, extras: newExtras })
-            }
+            onChanged={(newExtras) => handleConfigChange("extras", newExtras)}
           />
         </div>
         <div className="grid">
@@ -87,10 +90,7 @@ export default function AuthzConfiguration() {
                 type="checkbox"
                 checked={config.sendRedirectUri}
                 onChange={(event) =>
-                  setConfig({
-                    ...config,
-                    sendRedirectUri: event.target.checked,
-                  })
+                  handleConfigChange("sendRedirectUri", event.target.checked)
                 }
               />
               Send <code>redirect_uri</code>

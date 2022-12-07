@@ -1,5 +1,5 @@
-[ ] Support stateful mode
-[ ] Darkmode cookie (?)
+[ ] Dark mode persistence
+[ ] Change dark mode and stateful mode controls to tristate
 [ ] Implement CORS proxy and integrate with it
 [ ] Set Accept header on token request
 [ ] Allow passing auth params through POST body (token request)
@@ -22,3 +22,4 @@
 [x] Move client config to post authz (avoids browser caching secret in URL history)
 [x] Add breadcrumb
 [x] Form validation
+[x] Support stateful mode
