@@ -13,16 +13,19 @@ $enable-semantic-container: true;
 [data-theme="light"],
 :root:not([data-theme="dark"]) {
   --fieldset-border-color: hsl(205, 16%, 95%);
+  --divisor-background-color: var(--code-background-color);
 }
 
 @media only screen and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --fieldset-border-color: hsl(205, 16%, 18%);
+    --divisor-background-color: var(--code-background-color);
   }
 }
 
 [data-theme="dark"] {
   --fieldset-border-color: hsl(205, 16%, 18%);
+  --divisor-background-color: var(--code-background-color);
 }
 
 html,
@@ -35,6 +38,17 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+#root > header {
+  padding: 0 calc(var(--spacing) / 2);
+  box-shadow: 0 1px 0 rgba(115, 130, 140, 0.2);
+}
+
+#root > footer {
+  padding: var(--spacing) 0;
+  text-align: center;
+  box-shadow: 0 -1px 0 rgba(115, 130, 140, 0.2);
 }
 
 main {
@@ -128,4 +142,16 @@ summary.copyable button {
 summary.copyable::after {
   margin-inline-start: 0;
   margin-top: var(--spacing);
+}
+
+details[role="list"] svg {
+  min-width: 1.5em;
+}
+
+.divisor {
+  background-color: var(--divisor-background-color);
+  --font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-weight: var(--font-weight);
 }

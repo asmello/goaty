@@ -1,32 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, useLoaderData, useOutletContext } from "react-router-dom";
 import {
   trySetEphemeralItem,
   trySetPersistentItem,
 } from "../../common/helpers";
-import { RootState } from "../root/loader";
+import { RootState } from "../root/Root";
 import style from "./Callback.module.css";
-import { CallbackData, STORE_KEY, TokenRequestConfiguration } from "./loader";
+
+export interface CallbackParams {
+  code: string;
+  clientId: string;
+  redirectUri?: string;
+}
+
+export interface TokenRequestConfiguration {
+  tokenEndpoint: string;
+  clientSecret: string;
+  useProxy: boolean;
+  proxyUrl?: string;
+}
+
+export interface CallbackData {
+  params: CallbackParams;
+  config: TokenRequestConfiguration;
+}
+
+export const STATE_KEY = "callbackState";
 
 export default function Callback() {
   const context = useOutletContext() as RootState;
   const data = useLoaderData() as CallbackData;
 
   const [config, setConfig] = useState(data.config);
+
+  useEffect(() => {
+    switch (context.persistMode) {
+      case "SESSION":
+        trySetEphemeralItem(STATE_KEY, config);
+        break;
+      case "LOCAL":
+        trySetPersistentItem(STATE_KEY, config);
+        break;
+    }
+  }, [config, context.persistMode]);
+
   const handleConfigChange = (
     field: keyof TokenRequestConfiguration,
     newValue: TokenRequestConfiguration[keyof TokenRequestConfiguration]
   ) => {
-    const newConfig = {
+    setConfig({
       ...config,
       [field]: newValue,
-    };
-    if (context.persistEnabled) {
-      trySetPersistentItem(STORE_KEY, newConfig);
-    } else {
-      trySetEphemeralItem(STORE_KEY, newConfig);
-    }
-    setConfig(newConfig);
+    });
   };
 
   return (

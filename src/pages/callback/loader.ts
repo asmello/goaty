@@ -1,26 +1,7 @@
 import { json, LoaderFunctionArgs } from "react-router-dom";
 import { decode } from "../../common/State";
 import { ErrorData } from "../Error";
-
-export interface CallbackParams {
-  code: string;
-  clientId: string;
-  redirectUri?: string;
-}
-
-export interface TokenRequestConfiguration {
-  tokenEndpoint: string;
-  clientSecret: string;
-  useProxy: boolean;
-  proxyUrl?: string;
-}
-
-export interface CallbackData {
-  params: CallbackParams;
-  config: TokenRequestConfiguration;
-}
-
-export const STORE_KEY = "callbackState";
+import { CallbackData, STATE_KEY, TokenRequestConfiguration } from "./Callback";
 
 function emptyTokenRequestConfiguration(): TokenRequestConfiguration {
   return {
@@ -73,8 +54,8 @@ export default async function ({
   }
 
   const configString =
-    window.localStorage.getItem(STORE_KEY) ||
-    window.sessionStorage.getItem(STORE_KEY);
+    window.localStorage.getItem(STATE_KEY) ||
+    window.sessionStorage.getItem(STATE_KEY);
   const config: TokenRequestConfiguration = configString
     ? JSON.parse(configString)
     : emptyTokenRequestConfiguration();

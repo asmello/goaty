@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, useLoaderData, useOutletContext } from "react-router-dom";
 import {
   trySetEphemeralItem,
@@ -6,7 +6,7 @@ import {
 } from "../../common/helpers";
 import { Item } from "../../components/InputListItem";
 import { MapItem } from "../../components/InputMapItem";
-import { RootState } from "../root/loader";
+import { RootState } from "../root/Root";
 import Extras from "./Extras";
 import { STORE_KEY } from "./loader";
 import Scopes from "./Scopes";
@@ -24,20 +24,26 @@ export default function AuthzConfiguration() {
   const initialConfig = useLoaderData() as AuthzConfigurationData;
 
   const [config, setConfig] = useState<AuthzConfigurationData>(initialConfig);
+
+  useEffect(() => {
+    switch (context.persistMode) {
+      case "SESSION":
+        trySetEphemeralItem(STORE_KEY, config);
+        break;
+      case "LOCAL":
+        trySetPersistentItem(STORE_KEY, config);
+        break;
+    }
+  }, [config, context.persistMode]);
+
   const handleConfigChange = (
     field: keyof AuthzConfigurationData,
     newValue: AuthzConfigurationData[keyof AuthzConfigurationData]
   ) => {
-    const newConfig = {
+    setConfig({
       ...config,
       [field]: newValue,
-    };
-    if (context.persistEnabled) {
-      trySetPersistentItem(STORE_KEY, newConfig);
-    } else {
-      trySetEphemeralItem(STORE_KEY, newConfig);
-    }
-    setConfig(newConfig);
+    });
   };
 
   return (

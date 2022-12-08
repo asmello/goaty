@@ -1,57 +1,95 @@
-import { faFloppyDisk, faMoon } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBrush,
+  faCircleHalfStroke,
+  faFloppyDisk,
+  faHourglassHalf,
+  faInfinity,
+  faMoon,
+  faSun,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { NavLink, Outlet, useLoaderData } from "react-router-dom";
-import { trySetPersistentItem } from "../../common/helpers";
+import {
+  trySetEphemeralItem,
+  trySetPersistentItem,
+} from "../../common/helpers";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { RootState, STORE_KEY } from "./loader";
-import "./Root.css";
+
+export const STATE_KEY = "rootState";
+
+type PersistMode = "NONE" | "SESSION" | "LOCAL";
+type Theme = "SYSTEM" | "LIGHT" | "DARK";
+
+export interface RootState {
+  persistMode: PersistMode;
+  theme: Theme;
+}
 
 interface RootProps {
   children?: JSX.Element;
 }
 
+function moveFromTo(fromStorage: Storage, toStorage: Storage) {
+  toStorage.clear();
+  for (let i = 0; i < fromStorage.length; ++i) {
+    const keyName = fromStorage.key(i) as string;
+    const value = fromStorage.getItem(keyName) as string;
+    toStorage.setItem(keyName, value);
+  }
+  fromStorage.clear();
+}
+
 export default function Root({ children }: RootProps) {
   const loadedState = useLoaderData() as RootState;
-  const [context, setContext] = useState(loadedState);
+  const [state, setState] = useState(loadedState);
 
-  const handlePersistChange = (persist: boolean) => {
-    const newState = { persistEnabled: persist };
-    if (persist) {
-      // Move all key/value pairs to localStorage
-      window.localStorage.clear();
-      for (let i = 0; i < window.sessionStorage.length; ++i) {
-        const keyName = window.sessionStorage.key(i) as string;
-        const value = window.sessionStorage.getItem(keyName) as string;
-        window.localStorage.setItem(keyName, value);
-      }
-      window.sessionStorage.clear();
-      trySetPersistentItem(STORE_KEY, newState);
-    } else {
-      // Move all key/value pairs to sessionStorage
-      window.sessionStorage.clear();
-      for (let i = 0; i < window.localStorage.length; ++i) {
-        const keyName = window.localStorage.key(i) as string;
-        const value = window.localStorage.getItem(keyName) as string;
-        window.sessionStorage.setItem(keyName, value);
-      }
-      window.localStorage.clear();
+  useEffect(() => {
+    switch (state.persistMode) {
+      case "SESSION":
+        trySetEphemeralItem(STATE_KEY, state);
+        break;
+      case "LOCAL":
+        trySetPersistentItem(STATE_KEY, state);
+        break;
     }
-    setContext(newState);
+  }, [state]);
+
+  useEffect(() => {
+    const htmlRoot = document.documentElement;
+    switch (state.theme) {
+      case "SYSTEM":
+        htmlRoot.removeAttribute("data-theme");
+        break;
+      case "LIGHT":
+        htmlRoot.setAttribute("data-theme", "light");
+        break;
+      case "DARK":
+        htmlRoot.setAttribute("data-theme", "dark");
+        break;
+    }
+  }, [state]);
+
+  const handlePersistChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const persistMode = event.target.value as PersistMode;
+    switch (persistMode) {
+      case "NONE":
+        window.sessionStorage.clear();
+        window.localStorage.clear();
+        break;
+      case "SESSION":
+        moveFromTo(localStorage, sessionStorage);
+        break;
+      case "LOCAL":
+        moveFromTo(sessionStorage, localStorage);
+        break;
+    }
+    setState({ ...state, persistMode });
   };
 
-  const [darkModeEnabled, setDarkModeEnabled] = useState(
-    () => window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
-
-  const setDarkMode = (enabled: boolean) => {
-    const htmlRoot = document.documentElement;
-    if (enabled) {
-      htmlRoot.setAttribute("data-theme", "dark");
-    } else {
-      htmlRoot.setAttribute("data-theme", "light");
-    }
-    setDarkModeEnabled(enabled);
+  const handleThemeChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setState({ ...state, theme: event.target.value as Theme });
   };
 
   return (
@@ -73,35 +111,90 @@ export default function Root({ children }: RootProps) {
           <Breadcrumbs />
           <ul>
             <li>
-              <label htmlFor="dark-mode-toggle">
-                <input
-                  type="checkbox"
-                  id="dark-mode-toggle"
-                  role="switch"
-                  checked={darkModeEnabled}
-                  onChange={(event) => setDarkMode(event.target.checked)}
-                />
-                <FontAwesomeIcon icon={faMoon} size="lg" />
-              </label>
-            </li>
-            <li>
-              <label htmlFor="stateful-mode-toggle">
-                <input
-                  type="checkbox"
-                  id="stateful-mode-toggle"
-                  role="switch"
-                  checked={context.persistEnabled}
-                  onChange={(event) =>
-                    handlePersistChange(event.target.checked)
-                  }
-                />
-                <FontAwesomeIcon icon={faFloppyDisk} size="lg" />
-              </label>
+              <details role="list">
+                <summary aria-haspopup="listbox">Settings</summary>
+                <ul role="listbox">
+                  <li className="divisor">
+                    <FontAwesomeIcon icon={faBrush} /> Theme
+                  </li>
+                  <li>
+                    <fieldset>
+                      <label>
+                        <input
+                          type="radio"
+                          name="darkmode"
+                          value="SYSTEM"
+                          checked={state.theme === "SYSTEM"}
+                          onChange={handleThemeChange}
+                        />
+                        <FontAwesomeIcon icon={faCircleHalfStroke} /> System
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="darkmode"
+                          value="LIGHT"
+                          checked={state.theme === "LIGHT"}
+                          onChange={handleThemeChange}
+                        />
+                        <FontAwesomeIcon icon={faSun} /> Light
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="darkmode"
+                          value="DARK"
+                          checked={state.theme === "DARK"}
+                          onChange={handleThemeChange}
+                        />
+                        <FontAwesomeIcon icon={faMoon} /> Dark
+                      </label>
+                    </fieldset>
+                  </li>
+                  <li className="divisor">
+                    <FontAwesomeIcon icon={faFloppyDisk} /> Remember
+                  </li>
+                  <li>
+                    <fieldset>
+                      <label>
+                        <input
+                          type="radio"
+                          name="state"
+                          value="NONE"
+                          checked={state.persistMode === "NONE"}
+                          onChange={handlePersistChange}
+                        />
+                        <FontAwesomeIcon icon={faXmark} /> Never
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="state"
+                          value="SESSION"
+                          checked={state.persistMode === "SESSION"}
+                          onChange={handlePersistChange}
+                        />
+                        <FontAwesomeIcon icon={faHourglassHalf} /> Session
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="state"
+                          value="LOCAL"
+                          checked={state.persistMode === "LOCAL"}
+                          onChange={handlePersistChange}
+                        />
+                        <FontAwesomeIcon icon={faInfinity} /> Forever
+                      </label>
+                    </fieldset>
+                  </li>
+                </ul>
+              </details>
             </li>
           </ul>
         </nav>
       </header>
-      <main>{children || <Outlet context={context} />}</main>
+      <main>{children || <Outlet context={state} />}</main>
       <footer>
         Find me at <a href="https://github.com/asmello/goaty">Github</a>.
       </footer>
