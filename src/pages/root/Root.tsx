@@ -152,7 +152,13 @@ export default function Root({ children }: RootProps) {
                     </fieldset>
                   </li>
                   <li className="divisor">
-                    <FontAwesomeIcon icon={faFloppyDisk} /> Remember
+                    <FontAwesomeIcon icon={faFloppyDisk} />{" "}
+                    <span
+                      data-tooltip="Your settings and configuration parameters will be stored locally."
+                      data-placement="left"
+                    >
+                      Remember
+                    </span>
                   </li>
                   <li>
                     <fieldset>

@@ -1,6 +1,6 @@
+import { v4 as uuid } from "uuid";
 import InputMap from "../../components/InputMap";
 import { MapItem } from "../../components/InputMapItem";
-import { v4 as uuid } from "uuid";
 
 interface ExtrasProps {
   items: MapItem[];
@@ -28,7 +28,9 @@ export default function Extras({ items, onChanged }: ExtrasProps) {
   };
   return (
     <fieldset className="visible">
-      <legend>Extra Parameters</legend>
+      <legend data-tooltip="Include custom URL parameters in the request.">
+        Extra Parameters
+      </legend>
       <InputMap
         items={items}
         onCreate={handleItemCreate}

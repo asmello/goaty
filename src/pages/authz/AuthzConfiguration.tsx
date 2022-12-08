@@ -32,7 +32,12 @@ export default function AuthzConfiguration() {
       <Form method="post">
         <div className="grid">
           <label>
-            Authorization URL
+            <span
+              className="unmarked-tooltip"
+              data-tooltip="This is usually provided in documentation."
+            >
+              Authorization URL
+            </span>
             <input
               required
               name="authzEndpoint"
@@ -45,7 +50,12 @@ export default function AuthzConfiguration() {
             />
           </label>
           <label>
-            Client Identifier
+            <span
+              className="unmarked-tooltip"
+              data-tooltip="Sometimes called Application ID."
+            >
+              Client Identifier
+            </span>
             <input
               required
               name="clientId"
@@ -79,7 +89,12 @@ export default function AuthzConfiguration() {
                   handleConfigChange("sendRedirectUri", event.target.checked)
                 }
               />
-              Send <code>redirect_uri</code>
+              <span
+                className="unmarked-tooltip"
+                data-tooltip="Include the optional redirect_uri parameter in the request."
+              >
+                Send <code>redirect_uri</code>
+              </span>
             </label>
           </fieldset>
           <input type="submit" className="primary standalone" value="Go" />

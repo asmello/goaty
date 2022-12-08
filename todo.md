@@ -1,6 +1,5 @@
 [ ] Implement CORS proxy and integrate with it
 [ ] Use react-router-dom properly (suspend state)
-[ ] Add tooltips
 [ ] Add toasters
 [ ] Write About page
 [ ] Make it clear only explicit mode is implemented
@@ -23,3 +22,4 @@
 [x] Change dark mode and stateful mode controls to tristate
 [x] Set Accept header on token request
 [x] Allow passing auth params through POST body (token request)
+[x] Add tooltips

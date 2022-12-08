@@ -53,6 +53,7 @@ export default function () {
             </button>
             <span>Access Token</span>
           </summary>
+          <p>Used to access API resources on behalf of the user.</p>
           <textarea
             className="code"
             readOnly
@@ -73,6 +74,7 @@ export default function () {
             </button>
             <span>Refresh Token</span>
           </summary>
+          <p>Used to renew the access token when close to expiring.</p>
           <textarea className="code" readOnly value={data.refreshToken} />
         </details>
       </article>

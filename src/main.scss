@@ -155,3 +155,11 @@ details[role="list"] svg {
   margin-bottom: 0;
   font-weight: var(--font-weight);
 }
+
+:is(h1,h2,h3,h4,h5,h6).tight {
+  margin-bottom: calc(var(--spacing) / 2);
+}
+
+legend[data-tooltip], [data-tooltip].unmarked-tooltip {
+  border-bottom: 0;
+}

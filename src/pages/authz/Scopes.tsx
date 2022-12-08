@@ -1,6 +1,6 @@
+import { v4 as uuid } from "uuid";
 import InputList from "../../components/InputList";
 import { Item } from "../../components/InputListItem";
-import { v4 as uuid } from "uuid";
 
 interface ScopesProps {
   items: Item[];
@@ -24,7 +24,7 @@ export default function Scopes({ items, onChanged }: ScopesProps) {
 
   return (
     <fieldset className="visible">
-      <legend>Scopes</legend>
+      <legend data-tooltip="List of scopes to request.">Scopes</legend>
       <InputList
         items={items}
         onCreate={handleItemCreate}
