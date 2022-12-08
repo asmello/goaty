@@ -7,6 +7,8 @@ interface TokenRequest {
   grant_type: "authorization_code";
   code: string;
   redirect_uri?: string;
+  client_id?: string;
+  client_secret?: string;
 }
 
 interface Credentials {
@@ -32,13 +34,16 @@ export interface TokenData {
 async function handleRequest(
   url: string,
   request: TokenRequest,
-  credentials: Credentials
+  credentials: Credentials,
+  useBodyCredentials: boolean
 ): Promise<TokenResponse> {
   const response = await axios.postForm<TokenResponse>(url, request, {
-    auth: {
-      username: credentials.clientId,
-      password: credentials.clientSecret,
-    },
+    auth: !useBodyCredentials
+      ? {
+          username: credentials.clientId,
+          password: credentials.clientSecret,
+        }
+      : undefined,
     headers: {
       Accept: "application/json",
     },
@@ -50,12 +55,14 @@ async function handleProxyRequest(
   proxyUrl: string,
   tokenUrl: string,
   request: TokenRequest,
-  credentials: Credentials
+  credentials: Credentials,
+  useBodyCredentials: boolean
 ): Promise<TokenResponse> {
   const response = await axios.post<TokenResponse>(proxyUrl, {
-    tokenUrl: tokenUrl,
-    request: request,
-    credentials: credentials,
+    tokenUrl,
+    request,
+    credentials,
+    useBodyCredentials,
   });
   return response.data;
 }
@@ -66,22 +73,32 @@ export default async function ({
   const formData = await request.formData();
 
   const tokenUrl = fallibleExtractFromPostData(formData, "tokenUrl");
+  const creds: Credentials = {
+    clientId: fallibleExtractFromPostData(formData, "clientId"),
+    clientSecret: fallibleExtractFromPostData(formData, "clientSecret"),
+  };
+  const useBodyCredentials =
+    formData.get("useBodyCredentials")?.toString() === "on";
   const tokenRequest: TokenRequest = {
     grant_type: "authorization_code",
     code: fallibleExtractFromPostData(formData, "code"),
     redirect_uri: formData.get("redirectUri")?.toString(),
-  };
-  const creds: Credentials = {
-    clientId: fallibleExtractFromPostData(formData, "clientId"),
-    clientSecret: fallibleExtractFromPostData(formData, "clientSecret"),
+    client_id: useBodyCredentials ? creds.clientId : undefined,
+    client_secret: useBodyCredentials ? creds.clientSecret : undefined,
   };
 
   const proxyUrl = formData.get("proxyUrl")?.toString();
 
   try {
     const data = await (proxyUrl
-      ? handleProxyRequest(proxyUrl, tokenUrl, tokenRequest, creds)
-      : handleRequest(tokenUrl, tokenRequest, creds));
+      ? handleProxyRequest(
+          proxyUrl,
+          tokenUrl,
+          tokenRequest,
+          creds,
+          useBodyCredentials
+        )
+      : handleRequest(tokenUrl, tokenRequest, creds, useBodyCredentials));
 
     return json<TokenData>({
       accessToken: data.access_token,

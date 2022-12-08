@@ -9,6 +9,7 @@ function emptyTokenRequestConfiguration(): TokenRequestConfiguration {
     clientSecret: "",
     useProxy: false,
     proxyUrl: "https://goaty.themelon.net/proxy",
+    useBodyCredentials: false,
   };
 }
 

@@ -14,6 +14,7 @@ export interface TokenRequestConfiguration {
   clientSecret: string;
   useProxy: boolean;
   proxyUrl?: string;
+  useBodyCredentials: boolean;
 }
 
 export interface CallbackData {
@@ -93,6 +94,17 @@ export default function Callback() {
                 />
               </>
             )}
+            <label>
+              <input
+                name="useBodyCredentials"
+                type="checkbox"
+                checked={config.useBodyCredentials}
+                onChange={(event) =>
+                  handleConfigChange("useBodyCredentials", event.target.checked)
+                }
+              />
+              Use body credentials
+            </label>
           </fieldset>
           <input type="submit" className="primary standalone" value="Go" />
         </div>

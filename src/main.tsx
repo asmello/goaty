@@ -15,7 +15,7 @@ import AuthzConfiguration from "./pages/authz/AuthzConfiguration";
 import authzLoader from "./pages/authz/loader";
 import Callback from "./pages/callback/Callback";
 import callbackLoader from "./pages/callback/loader";
-import Error from "./pages/Error";
+import ErrorPage from "./pages/Error";
 import Home from "./pages/Home";
 import rootLoader from "./pages/root/loader";
 import Root from "./pages/root/Root";
@@ -27,11 +27,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <Root />,
     loader: rootLoader,
-    errorElement: (
-      <Root>
-        <Error />
-      </Root>
-    ),
+    errorElement: <ErrorPage />,
     children: [
       {
         element: <Home />,
