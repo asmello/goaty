@@ -1,9 +1,5 @@
-import { useEffect, useState } from "react";
 import { Form, useLoaderData, useOutletContext } from "react-router-dom";
-import {
-  trySetEphemeralItem,
-  trySetPersistentItem,
-} from "../../common/helpers";
+import { useStateUpdater } from "../../common/helpers";
 import { RootState } from "../root/Root";
 import style from "./Callback.module.css";
 
@@ -31,28 +27,11 @@ export default function Callback() {
   const context = useOutletContext() as RootState;
   const data = useLoaderData() as CallbackData;
 
-  const [config, setConfig] = useState(data.config);
-
-  useEffect(() => {
-    switch (context.persistMode) {
-      case "SESSION":
-        trySetEphemeralItem(STATE_KEY, config);
-        break;
-      case "LOCAL":
-        trySetPersistentItem(STATE_KEY, config);
-        break;
-    }
-  }, [config, context.persistMode]);
-
-  const handleConfigChange = (
-    field: keyof TokenRequestConfiguration,
-    newValue: TokenRequestConfiguration[keyof TokenRequestConfiguration]
-  ) => {
-    setConfig({
-      ...config,
-      [field]: newValue,
-    });
-  };
+  const [config, handleConfigChange] = useStateUpdater(
+    context,
+    STATE_KEY,
+    data.config
+  );
 
   return (
     <article>

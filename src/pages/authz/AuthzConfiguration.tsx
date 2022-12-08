@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
 import { Form, useLoaderData, useOutletContext } from "react-router-dom";
-import {
-  trySetEphemeralItem,
-  trySetPersistentItem,
-} from "../../common/helpers";
+import { useStateUpdater } from "../../common/helpers";
 import { Item } from "../../components/InputListItem";
 import { MapItem } from "../../components/InputMapItem";
 import { RootState } from "../root/Root";
 import Extras from "./Extras";
-import { STORE_KEY } from "./loader";
 import Scopes from "./Scopes";
+
+export const STATE_KEY = "authzState";
 
 export interface AuthzConfigurationData {
   authzEndpoint: string;
@@ -23,28 +20,11 @@ export default function AuthzConfiguration() {
   const context = useOutletContext() as RootState;
   const initialConfig = useLoaderData() as AuthzConfigurationData;
 
-  const [config, setConfig] = useState<AuthzConfigurationData>(initialConfig);
-
-  useEffect(() => {
-    switch (context.persistMode) {
-      case "SESSION":
-        trySetEphemeralItem(STORE_KEY, config);
-        break;
-      case "LOCAL":
-        trySetPersistentItem(STORE_KEY, config);
-        break;
-    }
-  }, [config, context.persistMode]);
-
-  const handleConfigChange = (
-    field: keyof AuthzConfigurationData,
-    newValue: AuthzConfigurationData[keyof AuthzConfigurationData]
-  ) => {
-    setConfig({
-      ...config,
-      [field]: newValue,
-    });
-  };
+  const [config, handleConfigChange] = useStateUpdater(
+    context,
+    STATE_KEY,
+    initialConfig
+  );
 
   return (
     <article>

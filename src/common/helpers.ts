@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { json } from "react-router-dom";
 import { ErrorData } from "../pages/Error";
+import { RootState } from "../pages/root/Root";
 
 export function fallibleExtractFromPostData(
   data: FormData,
@@ -44,4 +46,32 @@ export function trySetEphemeralItem(
     return false;
   }
   return true;
+}
+
+export function useStateUpdater<T extends object>(
+  rootState: RootState,
+  key: string,
+  initialState: T
+): [T, (field: keyof T, value: T[keyof T]) => void] {
+  const [state, setState] = useState(initialState);
+
+  useEffect(() => {
+    switch (rootState.persistMode) {
+      case "SESSION":
+        trySetEphemeralItem(key, state);
+        break;
+      case "LOCAL":
+        trySetPersistentItem(key, state);
+        break;
+    }
+  }, [state, rootState.persistMode]);
+
+  const handleStateChange = (field: keyof T, value: T[keyof T]) => {
+    setState({
+      ...state,
+      [field]: value,
+    });
+  };
+
+  return [state, handleStateChange];
 }
