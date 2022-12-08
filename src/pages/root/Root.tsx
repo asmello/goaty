@@ -207,7 +207,10 @@ export default function Root({ children }: RootProps) {
       </header>
       <main>{children || <Outlet context={state} />}</main>
       <footer>
-        Find me at <a href="https://github.com/asmello/goaty">Github</a>.
+        <small>
+          Developed by André Sá de Mello. Source available at{" "}
+          <a href="https://github.com/asmello/goaty">Github</a>.
+        </small>
       </footer>
     </>
   );

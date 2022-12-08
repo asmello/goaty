@@ -1,7 +1,6 @@
 [ ] Implement CORS proxy and integrate with it
 [ ] Use react-router-dom properly (suspend state)
 [ ] Add toasters
-[ ] Write About page
 [ ] Make it clear only explicit mode is implemented
 [ ] Implement CSS transitions
 [ ] Implement accessibility
@@ -23,3 +22,4 @@
 [x] Set Accept header on token request
 [x] Allow passing auth params through POST body (token request)
 [x] Add tooltips
+[x] Write About page

@@ -163,3 +163,11 @@ details[role="list"] svg {
 legend[data-tooltip], [data-tooltip].unmarked-tooltip {
   border-bottom: 0;
 }
+
+:is(h1, h2, h3, h4, h5, h6) {
+  --typography-spacing-vertical: 1em;
+}
+
+.text-justified {
+  text-align: justify;
+}
