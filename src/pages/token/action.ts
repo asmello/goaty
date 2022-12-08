@@ -39,6 +39,9 @@ async function handleRequest(
       username: credentials.clientId,
       password: credentials.clientSecret,
     },
+    headers: {
+      Accept: "application/json",
+    },
   });
   return response.data;
 }

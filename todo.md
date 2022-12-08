@@ -1,5 +1,4 @@
 [ ] Implement CORS proxy and integrate with it
-[ ] Set Accept header on token request
 [ ] Allow passing auth params through POST body (token request)
 [ ] Use react-router-dom properly (suspend state)
 [ ] Add tooltips
@@ -23,3 +22,4 @@
 [x] Support stateful mode
 [x] Dark mode persistence
 [x] Change dark mode and stateful mode controls to tristate
+[x] Set Accept header on token request
