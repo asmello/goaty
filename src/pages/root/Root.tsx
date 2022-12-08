@@ -2,6 +2,7 @@ import {
   faBrush,
   faCircleHalfStroke,
   faFloppyDisk,
+  faGear,
   faHourglassHalf,
   faInfinity,
   faMoon,
@@ -112,7 +113,11 @@ export default function Root({ children }: RootProps) {
           <ul>
             <li>
               <details role="list">
-                <summary aria-haspopup="listbox">Settings</summary>
+                <summary aria-haspopup="listbox">
+                  <span>
+                    <FontAwesomeIcon icon={faGear} /> Settings
+                  </span>
+                </summary>
                 <ul role="listbox">
                   <li className="divisor">
                     <FontAwesomeIcon icon={faBrush} /> Theme
