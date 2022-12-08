@@ -1,5 +1,5 @@
 import { json } from "react-router-dom";
-import { AuthzConfigurationData } from "./AuthzConfiguration";
+import { AuthzConfigurationData, STATE_KEY } from "./AuthzConfiguration";
 
 function emptyConfiguration(): AuthzConfigurationData {
   return {
@@ -11,15 +11,13 @@ function emptyConfiguration(): AuthzConfigurationData {
   };
 }
 
-export const STORE_KEY = "authzState";
-
 export default async function (): Promise<Response> {
-  const persistentState = window.localStorage.getItem(STORE_KEY);
+  const persistentState = window.localStorage.getItem(STATE_KEY);
   if (persistentState) {
     return json<AuthzConfigurationData>(JSON.parse(persistentState));
   }
 
-  const ephemeralState = window.sessionStorage.getItem(STORE_KEY);
+  const ephemeralState = window.sessionStorage.getItem(STATE_KEY);
   if (ephemeralState) {
     return json<AuthzConfigurationData>(JSON.parse(ephemeralState));
   }
