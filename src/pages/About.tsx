@@ -38,18 +38,19 @@ export default function About() {
         this application is fully stateless!
       </p>
       <p>
-        If you wish, you can enable state persistence in the Settings menu. This
-        will record your configuration and credentials in local browser storage.
-        You may choose to expire this data with your session (meaning it will be
+        If you wish, you can enable statefulness in the Settings menu. This will
+        record your configuration and credentials in local browser storage. You
+        may choose to expire this data with your session (meaning it will be
         deleted when you close the tab) or keep it indefinitely. Most modern
         browsers encrypt local data, but you shouldn't consider that feature
-        safe. <b>Don't store your production credentials in your browser!</b>
+        safe. Other users sharing your computer may still access the local data.{" "}
+        <b>Don't store your production credentials in your browser!</b>
       </p>
       <p>
         If you wish to review or audit the source code, it can be found at{" "}
         <a href="https://github.com/asmello/goaty">Github</a>. For maximum
         security, you can also build and deploy this application from source. It
-        can be served statically from an asset server.
+        can be served statically from an asset server, or just locally.
       </p>
       <h2>What about the Proxy feature?</h2>
       <p>
